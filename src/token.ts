@@ -2,7 +2,7 @@ import { isNumber } from './utils';
 
 export type TokenType =
   'EQUAL' | 'LPAREN' | 'RPAREN' | 'COMMA' |  // Single-character
-  'FUNCTION' | 'VARIABLE' | 'PATH' | 'VALUE' |  // Entities
+  'FUNCVAR' | 'PATH' | 'VALUE' |  // Entities
   'EOF';  // Misc
 
 
