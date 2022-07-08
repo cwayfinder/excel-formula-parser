@@ -1,5 +1,5 @@
 {
-  "name": "excel-parser",
+  "name": "excel-formula-parser",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
