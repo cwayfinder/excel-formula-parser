@@ -10,7 +10,8 @@ import {
     rule2Tree, rule2String,
     rule3Tree, rule3String,
     rule4Tree, rule4String,
-    rule5Tree, rule5String
+    rule5Tree, rule5String,
+    rule6String, rule6Html
 } from './cases'
 
 const excel : Excel = new Excel()
@@ -39,6 +40,14 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(rule3Tree)).toEqual(rule3String);
         expect(excel.stringify(rule4Tree)).toEqual(rule4String);
         expect(excel.stringify(rule5Tree)).toEqual(rule5String);
+    });
+
+});
+
+describe('Excel.toHtml() end usage tests', () => {
+
+    test('toHtml(tree) should return a builded html from Excel-like formula', () => {
+        expect(excel.toHtml(rule6String)).toEqual(rule6Html);
     });
 
 });

@@ -157,3 +157,6 @@ export const rule5Tree: ASTNode = {
     },
   ],
 };
+
+export const rule6String = `=NOT(EQ(legalForm, 'KG'))`
+export const rule6Html =`<div>=<span class="function">NOT</span>(<span class="function">EQ</span>(<span class="variable">legalForm</span>, <span class="value">'KG'</span>))</div>`

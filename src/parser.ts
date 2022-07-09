@@ -17,7 +17,13 @@ export class Parser {
     return this.tokens[this.index];
   }
 
-  unexpected_token_message(): string {
+  // Return next token
+  peekToken(): Token | undefined {
+    const advancedIndex: number = this.index + 1;
+    return (advancedIndex < this.tokens.length) ? this.tokens[advancedIndex] : undefined;
+  }
+
+  unexpectedTokenMessage(): string {
     return (`Unexpected token ${this.getCurrentToken().type}\n` +
       `line: ${this.getCurrentToken().line}\n` +
       `      ${' '.repeat(this.getCurrentToken().column)}^`);
@@ -28,7 +34,7 @@ export class Parser {
     if (this.getCurrentToken().type === type) {
       this.index += 1;
     } else {
-      throw new SyntaxError(this.unexpected_token_message());
+      throw new SyntaxError(this.unexpectedTokenMessage());
     }
   }
 
@@ -44,7 +50,7 @@ export class Parser {
   buildFunction(): ASTFunctionNode {
     const functionName: string = this.getCurrentToken().value;
 
-    this.eat('FUNCTION');
+    this.eat('FUNCVAR');
     this.eat('LPAREN');
 
     const args: Array<ASTNode> = [];
@@ -63,22 +69,20 @@ export class Parser {
   // Build ASTFunctionNode AST node entity : (function|variable|path|value)
   buildEntity(): ASTNode {
     switch (this.getCurrentToken().type) {
-      case 'FUNCTION':
-        return this.buildFunction();
-      case 'VARIABLE':
-        return this.buildVariable();
+      case 'FUNCVAR':
+        return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable()
       case 'PATH':
         return this.buildPath();
       case 'VALUE':
         return this.buildValue();
       default:
-        throw new SyntaxError(this.unexpected_token_message());
+        throw new SyntaxError(this.unexpectedTokenMessage());
     }
   }
 
   buildVariable(): ASTVariableNode {
     const variable = this.getCurrentToken().value;
-    this.eat('VARIABLE');
+    this.eat('FUNCVAR');
     return { type: 'variable', name: variable };
   }
 

@@ -1,7 +1,5 @@
 import { Token } from './token';
 
-const FUNCTIONS = ['IF', 'AND', 'OR', 'NOT', 'EQ', 'MATCH', 'INDEX', 'IN'];
-
 /*
  * Lexer is responsible for breaking a sentence apart into tokens
  */
@@ -62,13 +60,6 @@ export class Lexer {
       return new Token('COMMA', ',', this.index, this.text);
     }
 
-    // Tokenize FORMULA token type
-    const formula = this.getCurrentLine().match(`^(?:${FUNCTIONS.join('|')})(?=\\()`);
-    if (formula) {
-      this.advance(formula[0].length);
-      return new Token('FUNCTION', formula[0], this.index, this.text);
-    }
-
     // Tokenize PATH token type
     const path = this.getCurrentLine().match(/^\.?\/[\/\w]+/);
     if (path) {
@@ -83,11 +74,11 @@ export class Lexer {
       return new Token('VALUE', boolean[0], this.index, this.text);
     }
 
-    // Tokenize VARIABLE token type
-    const variable = this.getCurrentLine().match(/^\w+/);
-    if (variable) {
-      this.advance(variable[0].length);
-      return new Token('VARIABLE', variable[0], this.index, this.text);
+    // Tokenize FUNCVAR token type
+    const funcVar = this.getCurrentLine().match(/^\w+/);
+    if (funcVar) {
+      this.advance(funcVar[0].length);
+      return new Token('FUNCVAR', funcVar[0], this.index, this.text);
     }
 
     // Tokenize VALUE token type
