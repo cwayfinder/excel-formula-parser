@@ -61,7 +61,7 @@ export class Lexer {
     }
 
     // Tokenize PATH token type
-    const path = this.getCurrentLine().match(/^\.?\/[\/\w]+/);
+    const path = this.getCurrentLine().match(/^\.?\.?\/(?:[\w\.\/](?!\.\.\.+))*\/*/);
     if (path) {
       this.advance(path[0].length);
       return new Token('PATH', path[0], this.index, this.text);
