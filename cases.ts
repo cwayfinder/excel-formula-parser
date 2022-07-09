@@ -18,6 +18,7 @@ export const rule0Tree: ASTNode = {
     { type: 'value', value: 'Hello!' },
     { type: 'value', value: 'Goodbye!' },
   ],
+  closed: true,
 };
 
 
@@ -33,8 +34,10 @@ export const rule1Tree: ASTNode = {
         { type: 'variable', name: 'investorType' },
         { type: 'value', value: 'individual' },
       ],
+      closed: true,
     },
   ],
+  closed: true,
 };
 
 
@@ -46,6 +49,7 @@ export const rule2Tree: ASTNode = {
     { type: 'path', path: '/person/firstName' },
     { type: 'value', value: true },
   ],
+  closed: true,
 };
 
 
@@ -61,6 +65,7 @@ export const rule3Tree: ASTNode = {
         { type: 'path', path: './firstName' },
         { type: 'value', value: true },
       ],
+      closed: true,
     },
     {
       type: 'function',
@@ -73,10 +78,13 @@ export const rule3Tree: ASTNode = {
             { type: 'path', path: './companyType' },
             { type: 'value', value: 'nffe' },
           ],
+          closed: true,
         },
       ],
+      closed: true,
     },
   ],
+  closed: true,
 };
 
 
@@ -92,6 +100,7 @@ export const rule4Tree: ASTNode = {
         { type: 'path', path: './usPerson' },
         { type: 'value', value: true },
       ],
+      closed: true,
     },
     {
       type: 'function',
@@ -104,8 +113,10 @@ export const rule4Tree: ASTNode = {
             { type: 'path', path: './companyType' },
             { type: 'value', value: 'nffe' },
           ],
+          closed: true,
         },
       ],
+      closed: true,
     },
     {
       type: 'function',
@@ -118,10 +129,13 @@ export const rule4Tree: ASTNode = {
             { type: 'path', path: './nffeType' },
             { type: 'value', value: 'active' },
           ],
+          closed: true,
         },
       ],
+      closed: true,
     },
   ],
+  closed: true,
 };
 
 
@@ -137,6 +151,7 @@ export const rule5Tree: ASTNode = {
         { type: 'path', path: './usPerson' },
         { type: 'value', value: true },
       ],
+      closed: true,
     },
     {
       type: 'function',
@@ -152,11 +167,17 @@ export const rule5Tree: ASTNode = {
             },
             { type: 'path', path: './companyType' },
           ],
+          closed: true,
         },
       ],
+      closed: true,
     },
   ],
+  closed: true,
 };
 
-export const rule6String = `=NOT(EQ(legalForm, 'KG'))`
-export const rule6Html =`<div>=<span class="function">NOT</span>(<span class="function">EQ</span>(<span class="variable">legalForm</span>, <span class="value">'KG'</span>))</div>`
+export const rule6String = `=NOT(EQ(legalForm, 'KG'))`;
+export const rule6Html = `<div>=<span class="function">NOT</span>(<span class="function">EQ</span>(<span class="variable">legalForm</span>, <span class="value">'KG'</span>))</div>`;
+
+export const rule7String = `=NOT(EQ(lega`;
+export const rule7Html = `<div>=<span class="function">NOT</span>(<span class="function">EQ</span>(<span class="variable">lega</span></div>`;

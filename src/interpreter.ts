@@ -72,8 +72,11 @@ export class InterpreterToFormula extends InterpreterBase {
 export class InterpreterToHtml extends InterpreterBase {
 
   protected visitFunctionNode(node: ASTFunctionNode): string {
-    const args = this.visitArrayNodes(node.args);
-    return `${this.createHtmlSpan('function', node.name)}(${args})`;
+    var result: string = '';
+    result += this.createHtmlSpan('function', node.name);
+    result += `(${this.visitArrayNodes(node.args)}`;
+    result += (node.closed) ? `)` : ``;
+    return result;
   }
 
   protected visitVariableNode(node: ASTVariableNode): string {
