@@ -6,6 +6,7 @@ export interface ASTFunctionNode extends ASTNodeBase {
   type: 'function';
   name: string;
   args: ASTNode[];
+  closed: boolean;
 }
 
 export interface ASTVariableNode extends ASTNodeBase {

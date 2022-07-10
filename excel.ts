@@ -25,9 +25,9 @@ export class Excel {
     return this.interpreterToFormula.interpret(tree);
   }
 
-  toHtml(string: string): string {
+  toHtml(string: string, flexible: boolean = false): string {
     const tokenized = this.lexer.tokenize(string);
-    const ASTNode = this.parser.parse(tokenized);
-    return this.interpreterToHtml.interpret(ASTNode)
+    const ASTNode = this.parser.parse(tokenized, flexible);
+    return this.interpreterToHtml.interpret(ASTNode);
   }
 }

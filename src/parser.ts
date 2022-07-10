@@ -7,10 +7,12 @@ import { ASTFunctionNode, ASTNode, ASTPathNode, ASTValueNode, ASTVariableNode } 
 export class Parser {
   tokens: Token[];
   index: number;
+  flexible: boolean;
 
   constructor() {
     this.tokens = [];
     this.index = 0;
+    this.flexible = false;
   }
 
   getCurrentToken(): Token {
@@ -26,7 +28,7 @@ export class Parser {
   unexpectedTokenMessage(): string {
     return (`Unexpected token ${this.getCurrentToken().type}\n` +
       `line: ${this.getCurrentToken().line}\n` +
-      `      ${' '.repeat(this.getCurrentToken().column)}^`);
+      `     ${' '.repeat(this.getCurrentToken().column)}^`);
   }
 
   // Compare current token type with a TYPE, if matchs, advance to next token, otherwise raise exception
@@ -36,6 +38,26 @@ export class Parser {
     } else {
       throw new SyntaxError(this.unexpectedTokenMessage());
     }
+  }
+
+  // Same as eat() but optionally flexible with token TYPE
+  // also returns bool if current token was eated or not
+  flexibleEat(type: TokenType): boolean {
+    var wasEaten: boolean;
+
+    if (this.flexible) {
+      try {
+        this.eat(type);
+        wasEaten = true;
+      } catch {
+        wasEaten = false;
+      }
+    } else {
+      this.eat(type);
+      wasEaten = true;
+    }
+
+    return wasEaten;
   }
 
   // Build Formula AST node formula : EQUAL entity EOF
@@ -61,16 +83,16 @@ export class Parser {
       args.push(this.buildEntity());
     } while (this.getCurrentToken().type === 'COMMA');
 
-    this.eat('RPAREN');
+    var closed: boolean = this.flexibleEat('RPAREN');
 
-    return { type: 'function', name: functionName, args };
+    return { type: 'function', name: functionName, args, closed };
   }
 
   // Build ASTFunctionNode AST node entity : (function|variable|path|value)
   buildEntity(): ASTNode {
     switch (this.getCurrentToken().type) {
       case 'FUNCVAR':
-        return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable()
+        return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable();
       case 'PATH':
         return this.buildPath();
       case 'VALUE':
@@ -103,16 +125,17 @@ export class Parser {
    * Parse tokens into an AST
    *
    * formula : EQUAL entity EOF
-   * function : FUNCTION LPAREN (entity COMMA?)+ RPAREN
-   * entity : (function|variable|path|value)
-   * variable : VARIABLE
+   * function : FUNCVAR LPAREN (entity COMMA?)+ RPAREN
+   * entity : (variable|path|value)
+   * variable : FUNCVAR
    * path : PATH
    * value : VALUE
    */
-  parse(tokens: Token[]): ASTNode {
+  parse(tokens: Token[], flexible: boolean = false): ASTNode {
     /* Set global class states */
     this.tokens = tokens;
     this.index = 0;
+    this.flexible = flexible;
 
     return this.buildFormula();
   }

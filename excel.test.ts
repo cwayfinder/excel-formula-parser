@@ -11,7 +11,8 @@ import {
     rule3Tree, rule3String,
     rule4Tree, rule4String,
     rule5Tree, rule5String,
-    rule6String, rule6Html
+    rule6String, rule6Html,
+    rule7String, rule7Html
 } from './cases'
 
 const excel : Excel = new Excel()
@@ -46,8 +47,31 @@ describe('Excel.stringify() end usage tests', () => {
 
 describe('Excel.toHtml() end usage tests', () => {
 
+    test('Testing parsing paths', () => {
+        expect(excel.toHtml('=EQ(./person/firstName, true)')).toContain('<span class=\"path\">./person/firstName</span>');
+        expect(excel.toHtml('=EQ(../person/firstName, true)')).toContain('<span class=\"path\">../person/firstName</span>');
+        expect(excel.toHtml('=EQ(../person/./firstName/../lastname, true)')).toContain('<span class=\"path\">../person/./firstName/../lastname</span>');
+        expect(() => { excel.toHtml(`=EQ(../person/./firstName/.../lastname, true)`)}).toThrow();
+        expect(() => { excel.toHtml(`=EQ(.../person/firstName, true)`)}).toThrow();
+    });
+
+    test('Testing parsing booleans', () => {
+        expect(excel.toHtml('=EQ(./person/firstName, true)')).toContain('<span class=\"value\">true</span>');
+        expect(excel.toHtml('=EQ(./person/firstName, false)')).toContain('<span class=\"value\">false</span>');
+        expect(excel.toHtml('=EQ(./person/firstName, falsee)')).toContain('<span class=\"variable\">falsee</span>');
+    });
+
     test('toHtml(tree) should return a builded html from Excel-like formula', () => {
         expect(excel.toHtml(rule6String)).toEqual(rule6Html);
+    });
+
+    test('toHtml(tree) with invalid Excel-like formula should throw exception', () => {
+        expect(() => { excel.toHtml(`=NOT(EQ(investorType)), 'individual')`)}).toThrow();
+        expect(() => { excel.toHtml(`=NOT(EQ(investorType, 'individual'`)}).toThrow();
+    });
+
+    test('toHtml(tree, flexible=true) should parse incomplete formula without problem', () => {
+        expect(excel.toHtml(rule7String, true)).toEqual(rule7Html);
     });
 
 });
