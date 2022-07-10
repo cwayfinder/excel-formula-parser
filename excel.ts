@@ -25,9 +25,10 @@ export class Excel {
     return this.interpreterToFormula.interpret(tree);
   }
 
-  toHtml(string: string, flexible: boolean = false): string {
+  toHtml(string: string, flexible: boolean = false, maxParenDeep: number = 3): string {
     const tokenized = this.lexer.tokenize(string);
     const ASTNode = this.parser.parse(tokenized, flexible);
+    this.interpreterToHtml.setMaxParenDeep(maxParenDeep)
     return this.interpreterToHtml.interpret(ASTNode);
   }
 }

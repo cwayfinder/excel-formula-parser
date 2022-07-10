@@ -177,7 +177,50 @@ export const rule5Tree: ASTNode = {
 };
 
 export const rule6String = `=NOT(EQ(legalForm, 'KG'))`;
-export const rule6Html = `<div>=<span class="function">NOT</span>(<span class="function">EQ</span>(<span class="variable">legalForm</span>, <span class="value">'KG'</span>))</div>`;
+export const rule6Html = (
+  `<div>=` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-1\">(</span>` +
+  `<span class=\"function\">EQ</span>` +
+  `<span class=\"paren-deep-2\">(</span>` +
+  `<span class=\"variable\">legalForm</span>, <span class=\"value\">'KG'</span>` +
+  `<span class=\"paren-deep-2\">)</span>` +
+  `<span class=\"paren-deep-1\">)</span>` +
+  `</div>`
+);
 
 export const rule7String = `=NOT(EQ(lega`;
-export const rule7Html = `<div>=<span class="function">NOT</span>(<span class="function">EQ</span>(<span class="variable">lega</span></div>`;
+export const rule7Html = (
+  `<div>=` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-1\">(</span>` +
+  `<span class=\"function\">EQ</span>` +
+  `<span class=\"paren-deep-2\">(</span>` +
+  `<span class=\"variable\">lega</span>` +
+  `</div>`
+);
+
+export const rule8String = `=NOT(NOT(NOT(NOT(NOT(NOT(true))))))`;
+export const rule8Html = (
+  `<div>=` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-1\">(</span>` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-2\">(</span>` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-3\">(</span>` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-1\">(</span>` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-2\">(</span>` +
+  `<span class=\"function\">NOT</span>` +
+  `<span class=\"paren-deep-3\">(</span>` +
+  `<span class=\"value\">true</span>` +
+  `<span class=\"paren-deep-3\">)</span>` +
+  `<span class=\"paren-deep-2\">)</span>` +
+  `<span class=\"paren-deep-1\">)</span>` +
+  `<span class=\"paren-deep-3\">)</span>` +
+  `<span class=\"paren-deep-2\">)</span>` +
+  `<span class=\"paren-deep-1\">)</span>` +
+  `</div>`
+);

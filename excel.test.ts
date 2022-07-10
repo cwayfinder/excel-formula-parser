@@ -12,7 +12,8 @@ import {
     rule4Tree, rule4String,
     rule5Tree, rule5String,
     rule6String, rule6Html,
-    rule7String, rule7Html
+    rule7String, rule7Html,
+    rule8String, rule8Html
 } from './cases'
 
 const excel : Excel = new Excel()
@@ -72,6 +73,10 @@ describe('Excel.toHtml() end usage tests', () => {
 
     test('toHtml(tree, flexible=true) should parse incomplete formula without problem', () => {
         expect(excel.toHtml(rule7String, true)).toEqual(rule7Html);
+    });
+
+    test('Excel.toHtml() parent deeps should loop from 0 to max deep level', () => {
+        expect(excel.toHtml(rule8String, true)).toEqual(rule8Html);
     });
 
 });
