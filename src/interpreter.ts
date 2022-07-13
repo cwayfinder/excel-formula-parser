@@ -71,12 +71,35 @@ export class InterpreterToFormula extends InterpreterBase {
  */
 export class InterpreterToHtml extends InterpreterBase {
 
+  maxParenDeep: number;
+  currentDeep: number;
+
+  constructor(maxParenDeep:number=3) {
+    super();
+    this.maxParenDeep = maxParenDeep;
+    this.currentDeep = 1;
+  }
+
   protected visitFunctionNode(node: ASTFunctionNode): string {
     var result: string = '';
+
+    const paren: string = `paren-deep-${this.currentDeep}`;
+    this.incrementParenDeep();
+
     result += this.createHtmlSpan('function', node.name);
-    result += `(${this.visitArrayNodes(node.args)}`;
-    result += (node.closed) ? `)` : ``;
+    result += this.createHtmlSpan(paren, '(')
+    result += this.visitArrayNodes(node.args);
+    result += (node.closed) ? this.createHtmlSpan(paren, ')') : ``;
+
     return result;
+  }
+
+  protected incrementParenDeep() : void {
+    if (this.currentDeep < this.maxParenDeep) {
+      this.currentDeep += 1
+    } else {
+      this.currentDeep = 1
+    }
   }
 
   protected visitVariableNode(node: ASTVariableNode): string {
@@ -95,7 +118,12 @@ export class InterpreterToHtml extends InterpreterBase {
     return `<span class="${class_attr}">${value}</span>`;
   }
 
+  setMaxParenDeep(newMaxParenDeep: number) : void {
+    this.maxParenDeep = newMaxParenDeep;
+  }
+
   interpret(tree: ASTNode): string {
+    this.currentDeep = 1;
     return `<div>=${this.visitNode(tree)}</div>`;
   }
 }
