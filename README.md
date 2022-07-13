@@ -35,3 +35,13 @@ Output:
 ```html
 <div>=<span class="function">AND</span><span class="paren-deep-1">(</span><span class="function">EQ</span><span class="paren-deep-2">(</span><span class="variable">firstName</span>, <span class="value">'John'</span><span class="paren-deep-2">)</span>, <span class="function">EQ</span><span class="paren-deep-3">(</span><span class="variable">lastName</span>, <span class="value">'Brown'</span><span class="paren-deep-3">)</span><span class="paren-deep-1">)</span></div>
 ```
+
+Example 3 (incomplete formula)
+```ts
+excel.toHtml(`=NOT(EQ(lega`, true);
+```
+
+Output:
+```html
+<div>=<span class="function">NOT</span><span class="paren-deep-1">(</span><span class="function">EQ</span><span class="paren-deep-2">(</span><span class="variable">lega</span></div>
+```
