@@ -26,9 +26,9 @@ export class Excel {
   }
 
   toHtml(string: string, flexible: boolean = false, maxParenDeep: number = 3): string {
-    const tokenized = this.lexer.tokenize(string);
+    const tokenized = this.lexer.tokenize(string, flexible);
     const ASTNode = this.parser.parse(tokenized, flexible);
-    this.interpreterToHtml.setMaxParenDeep(maxParenDeep)
+    this.interpreterToHtml.setMaxParenDeep(maxParenDeep);
     return this.interpreterToHtml.interpret(ASTNode);
   }
 }

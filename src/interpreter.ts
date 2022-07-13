@@ -27,11 +27,6 @@ abstract class InterpreterBase {
   }
 
   protected visitValue(item: string): string {
-
-    if (typeof item === 'string') {
-      return `'${String(item)}'`;
-    }
-
     return item;
   }
 
@@ -87,7 +82,7 @@ export class InterpreterToHtml extends InterpreterBase {
     this.incrementParenDeep();
 
     result += this.createHtmlSpan('function', node.name);
-    result += this.createHtmlSpan(paren, '(')
+    result += this.createHtmlSpan(paren, '(');
     result += this.visitArrayNodes(node.args);
     result += (node.closed) ? this.createHtmlSpan(paren, ')') : ``;
 
@@ -96,9 +91,9 @@ export class InterpreterToHtml extends InterpreterBase {
 
   protected incrementParenDeep() : void {
     if (this.currentDeep < this.maxParenDeep) {
-      this.currentDeep += 1
+      this.currentDeep += 1;
     } else {
-      this.currentDeep = 1
+      this.currentDeep = 1;
     }
   }
 

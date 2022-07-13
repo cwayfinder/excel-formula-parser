@@ -29,14 +29,9 @@ export class Token {
       this.value = Number(value);
     }
 
-    // Check if value is array
-    else if (value.startsWith('\[')) {
-      this.value = JSON.parse(value.replace(/'/g, '"'));
-    }
-
-    // Otherwise save value without quotes
+    // Otherwise save value directly
     else {
-      this.value = value.replace(/((^'|'$)|(?:^"|"$))/g, '');
+      this.value = value;
     }
   }
 }
