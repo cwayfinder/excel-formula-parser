@@ -14,7 +14,7 @@ excel.parse(`=AND(EQ(firstName, 'John'), EQ(lastName, 'Brown'))`);
 ```
 
 # Generate HTML for syntax highlighting
-Example 1:
+**Example 1:**
 ```ts
 const excel = new Excel();
 excel.toHtml(`=EQ(/person/firstName, true)`);
@@ -25,7 +25,7 @@ Output:
 <div>=<span class="function">EQ</span><span class="paren-deep-1">(</span><span class="path">/person/firstName</span>, <span class="value">true</span><span class="paren-deep-1">)</span></div>
 ```
 
-Example 2:
+**Example 2:**
 ```ts
 const excel = new Excel();
 excel.toHtml(`=AND(EQ(firstName, 'John'), EQ(lastName, 'Brown'))`);
@@ -36,7 +36,7 @@ Output:
 <div>=<span class="function">AND</span><span class="paren-deep-1">(</span><span class="function">EQ</span><span class="paren-deep-2">(</span><span class="variable">firstName</span>, <span class="value">'John'</span><span class="paren-deep-2">)</span>, <span class="function">EQ</span><span class="paren-deep-3">(</span><span class="variable">lastName</span>, <span class="value">'Brown'</span><span class="paren-deep-3">)</span><span class="paren-deep-1">)</span></div>
 ```
 
-Example 3 (incomplete formula)
+**Example 3 (incomplete formula):**
 ```ts
 excel.toHtml(`=NOT(EQ(lega`, true);
 ```
