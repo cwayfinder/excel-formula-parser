@@ -27,6 +27,11 @@ abstract class InterpreterBase {
   }
 
   protected visitValue(item: string): string {
+
+    if (typeof item === 'string') {
+      return `'${String(item)}'`;
+    }
+
     return item;
   }
 

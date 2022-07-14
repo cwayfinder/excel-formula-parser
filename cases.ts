@@ -15,8 +15,8 @@ export const rule0Tree: ASTNode = {
   name: 'IF',
   args: [
     { type: 'value', value: true },
-    { type: 'value', value: "'Hello!'" },
-    { type: 'value', value: "'Goodbye!'" },
+    { type: 'value', value: "Hello!" },
+    { type: 'value', value: "Goodbye!" },
   ],
   closed: true,
 };
@@ -32,7 +32,7 @@ export const rule1Tree: ASTNode = {
       name: 'EQ',
       args: [
         { type: 'variable', name: 'investorType' },
-        { type: 'value', value: "'individual'" },
+        { type: 'value', value: "individual" },
       ],
       closed: true,
     },
@@ -76,7 +76,7 @@ export const rule3Tree: ASTNode = {
           name: 'EQ',
           args: [
             { type: 'path', path: './companyType' },
-            { type: 'value', value: "'nffe'" },
+            { type: 'value', value: "nffe" },
           ],
           closed: true,
         },
@@ -111,7 +111,7 @@ export const rule4Tree: ASTNode = {
           name: 'EQ',
           args: [
             { type: 'path', path: './companyType' },
-            { type: 'value', value: "'nffe'" },
+            { type: 'value', value: "nffe" },
           ],
           closed: true,
         },
@@ -127,7 +127,7 @@ export const rule4Tree: ASTNode = {
           name: 'EQ',
           args: [
             { type: 'path', path: './nffeType' },
-            { type: 'value', value: "'active'" },
+            { type: 'value', value: "active" },
           ],
           closed: true,
         },
@@ -163,7 +163,7 @@ export const rule5Tree: ASTNode = {
           args: [
             {
               type: 'value',
-              value: "['investment_company', 'custodial_institution', 'depositary_institution', 'specified_insurance_company']",
+              value: ['investment_company', 'custodial_institution', 'depositary_institution', 'specified_insurance_company'],
             },
             { type: 'path', path: './companyType' },
           ],

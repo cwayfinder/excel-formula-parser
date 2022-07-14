@@ -72,8 +72,19 @@ describe('Excel.toHtml() end usage tests', () => {
     });
 
     test('Testing parsing arrays', () => {
-        expect(excel.toHtml('=EQ(./person/, [100.23, 232.46, 567.98])')).toContain('<span class=\"value\">[100.23, 232.46, 567.98]</span>');
-        expect(excel.toHtml('=EQ(./person/, [\'name\', \'lastname\', \'age\'])')).toContain('<span class=\"value\">[\'name\', \'lastname\', \'age\']</span>');
+        const expectedNumberArray = (
+            `[<span class=\"value\">100.23</span>, ` +
+            `<span class=\"value\">232.46</span>, ` +
+            `<span class=\"value\">567.98</span>]`
+        );
+        expect(excel.toHtml('=EQ(./person/, [100.23, 232.46, 567.98])')).toContain(expectedNumberArray);
+
+        const expectedStringArray = (
+            `[<span class=\"value\">'name'</span>, ` +
+            `<span class=\"value\">'lastname'</span>, ` +
+            `<span class=\"value\">'age'</span>]`
+        )
+        expect(excel.toHtml('=EQ(./person/, [\'name\', \'lastname\', \'age\'])')).toContain(expectedStringArray);
     });
 
     test('toHtml(tree) with invalid Excel-like formula should throw exception', () => {
@@ -81,9 +92,9 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(() => { excel.toHtml(`=NOT(EQ(investorType, 'individual'`)}).toThrow();
     });
 
-    test('toHtml(tree, flexible=true) should parse incomplete formula without problem', () => {
+    test('toHtml(tree, flexible=true) should parse incomplete formula and autocomplete quotes', () => {
         expect(excel.toHtml(rule7String, true)).toEqual(rule7Html);
-        expect(excel.toHtml("=EQ(legalForm, 'KG", true)).toContain('<span class=\"value\">\'KG</span>');
+        expect(excel.toHtml("=EQ(legalForm, 'KG", true)).toContain(`<span class=\"value\">\'KG'</span>`);
         expect(excel.toHtml("=EQ(", true)).toEqual('<div>=<span class=\"function\">EQ</span><span class=\"paren-deep-1\">(</span></div>');
     });
 
