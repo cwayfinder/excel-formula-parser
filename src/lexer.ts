@@ -91,9 +91,11 @@ export class Lexer {
       return new Token('VALUE', value[0], this.index, this.text);
     }
 
-    throw new SyntaxError('invalid syntax\n' +
-      `line: ${this.text}\n` +
-      `      ${' '.repeat(this.index)}^`);
+    throw new SyntaxError(
+      `invalid syntax\n` +
+      `formula: ${this.text}\n` +
+      `        ${' '.repeat(this.index)}^`
+    );
   }
 
   tokenize(text: string, flexible: boolean = false): Array<Token> {
