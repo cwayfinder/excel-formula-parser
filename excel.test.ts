@@ -48,6 +48,10 @@ describe('Excel.stringify() end usage tests', () => {
 
 describe('Excel.toHtml() end usage tests', () => {
 
+    test('toHtml(tree) should return a builded html from Excel-like formula', () => {
+        expect(excel.toHtml(rule6String)).toEqual(rule6Html);
+    });
+
     test('Testing parsing paths', () => {
         expect(excel.toHtml('=EQ(./person/firstName, true)')).toContain('<span class=\"path\">./person/firstName</span>');
         expect(excel.toHtml('=EQ(../person/firstName, true)')).toContain('<span class=\"path\">../person/firstName</span>');
@@ -62,8 +66,14 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml('=EQ(./person/firstName, falsee)')).toContain('<span class=\"variable\">falsee</span>');
     });
 
-    test('toHtml(tree) should return a builded html from Excel-like formula', () => {
-        expect(excel.toHtml(rule6String)).toEqual(rule6Html);
+    test('Testing parsing numbers', () => {
+        expect(excel.toHtml('=EQ(./person/firstName, 1000)')).toContain('<span class=\"value\">1000</span>');
+        expect(excel.toHtml('=EQ(./person/firstName, 100.25)')).toContain('<span class=\"value\">100.25</span>');
+    });
+
+    test('Testing parsing arrays', () => {
+        expect(excel.toHtml('=EQ(./person/, [100.23, 232.46, 567.98])')).toContain('<span class=\"value\">[100.23, 232.46, 567.98]</span>');
+        expect(excel.toHtml('=EQ(./person/, [\'name\', \'lastname\', \'age\'])')).toContain('<span class=\"value\">[\'name\', \'lastname\', \'age\']</span>');
     });
 
     test('toHtml(tree) with invalid Excel-like formula should throw exception', () => {
