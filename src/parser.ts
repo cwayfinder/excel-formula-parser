@@ -80,6 +80,9 @@ export class Parser {
       if (this.getCurrentToken().type === 'COMMA') {
         this.eat('COMMA');
       }
+      if (this.flexible && this.getCurrentToken().type === 'EOF') {
+        break;
+      }
       args.push(this.buildEntity());
     } while (this.getCurrentToken().type === 'COMMA');
 
