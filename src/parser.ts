@@ -43,23 +43,16 @@ export class Parser {
   }
 
   // Same as eat() but optionally flexible with token TYPE
-  // also returns bool if current token was eated or not
-  flexibleEat(type: TokenType): boolean {
-    var wasEaten: boolean;
-
+  flexibleEat(type: TokenType): void {
     if (this.flexible) {
       try {
         this.eat(type);
-        wasEaten = true;
       } catch {
-        wasEaten = false;
+        // Do nothing
       }
     } else {
       this.eat(type);
-      wasEaten = true;
     }
-
-    return wasEaten;
   }
 
   // Build Formula AST node formula : EQUAL entity EOF
@@ -88,9 +81,9 @@ export class Parser {
       args.push(this.buildEntity());
     } while (this.getCurrentToken().type === 'COMMA');
 
-    var closed: boolean = this.flexibleEat('RPAREN');
+    this.flexibleEat('RPAREN');
 
-    return { type: 'function', name: functionName, args, closed };
+    return { type: 'function', name: functionName, args };
   }
 
   // Build ASTFunctionNode AST node entity : (function|variable|path|value)

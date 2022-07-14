@@ -89,7 +89,7 @@ export class InterpreterToHtml extends InterpreterBase {
     result += this.createHtmlSpan('function', node.name);
     result += this.createHtmlSpan(paren, '(');
     result += this.visitArrayNodes(node.args);
-    result += (node.closed) ? this.createHtmlSpan(paren, ')') : ``;
+    result += this.createHtmlSpan(paren, ')');
 
     return result;
   }

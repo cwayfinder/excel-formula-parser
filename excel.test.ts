@@ -92,10 +92,18 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(() => { excel.toHtml(`=NOT(EQ(investorType, 'individual'`)}).toThrow();
     });
 
-    test('toHtml(tree, flexible=true) should parse incomplete formula and autocomplete quotes', () => {
+    test('toHtml(tree, flexible=true) should parse incomplete formula and autocomplete quotes and paren', () => {
         expect(excel.toHtml(rule7String, true)).toEqual(rule7Html);
         expect(excel.toHtml("=EQ(legalForm, 'KG", true)).toContain(`<span class=\"value\">\'KG'</span>`);
-        expect(excel.toHtml("=EQ(", true)).toEqual('<div>=<span class=\"function\">EQ</span><span class=\"paren-deep-1\">(</span></div>');
+        
+        const expected = (
+            `<div>=` +
+            `<span class=\"function\">EQ</span>` +
+            `<span class=\"paren-deep-1\">(</span>` +
+            `<span class=\"paren-deep-1\">)</span>` +
+            `</div>`
+        );
+        expect(excel.toHtml("=EQ(", true)).toEqual(expected);
     });
 
     test('Excel.toHtml() parent deeps should loop from 0 to max deep level', () => {
