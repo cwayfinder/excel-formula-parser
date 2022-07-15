@@ -26,9 +26,11 @@ export class Parser {
   }
 
   unexpectedTokenMessage(): string {
-    return (`Unexpected token ${this.getCurrentToken().type}\n` +
-      `line: ${this.getCurrentToken().line}\n` +
-      `     ${' '.repeat(this.getCurrentToken().column)}^`);
+    throw new SyntaxError((
+      `Unexpected "${this.getCurrentToken().value}"\n` +
+      `formula ${this.getCurrentToken().line}\n` +
+      `       ${' '.repeat(this.getCurrentToken().column)}^`
+    ));
   }
 
   // Compare current token type with a TYPE, if matchs, advance to next token, otherwise raise exception
@@ -79,6 +81,9 @@ export class Parser {
     do {
       if (this.getCurrentToken().type === 'COMMA') {
         this.eat('COMMA');
+      }
+      if (this.flexible && this.getCurrentToken().type === 'EOF') {
+        break;
       }
       args.push(this.buildEntity());
     } while (this.getCurrentToken().type === 'COMMA');

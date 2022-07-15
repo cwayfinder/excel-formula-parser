@@ -6,10 +6,12 @@ import { Token } from './token';
 export class Lexer {
   text: string;
   index: number;
+  flexible: boolean;
 
   constructor() {
     this.text = '';
     this.index = 0;
+    this.flexible = false;
   }
 
   // Advance index n STEP
@@ -75,27 +77,31 @@ export class Lexer {
     }
 
     // Tokenize FUNCVAR token type
-    const funcVar = this.getCurrentLine().match(/^\w+/);
+    const funcVar = this.getCurrentLine().match(/^[a-zA-Z]\w+/);
     if (funcVar) {
       this.advance(funcVar[0].length);
       return new Token('FUNCVAR', funcVar[0], this.index, this.text);
     }
 
     // Tokenize VALUE token type
-    const value = this.getCurrentLine().match(/^('.+?'|".+?"|\[.+?])/);
+    const pattern = (this.flexible) ? /^(\'.+\'?|\".+\"?|\[.+\]?|\d+\.?\d+)/ : /^(\'.+?\'|\".+?\"|\[.+?\]|\d+\.?\d+)/;
+    const value = this.getCurrentLine().match(pattern);
     if (value) {
       this.advance(value[0].length);
       return new Token('VALUE', value[0], this.index, this.text);
     }
 
-    throw new SyntaxError('invalid syntax\n' +
-      `line: ${this.text}\n` +
-      `      ${' '.repeat(this.index)}^`);
+    throw new SyntaxError(
+      `invalid syntax\n` +
+      `formula: ${this.text}\n` +
+      `        ${' '.repeat(this.index)}^`
+    );
   }
 
-  tokenize(text: string): Array<Token> {
+  tokenize(text: string, flexible: boolean = false): Array<Token> {
     this.text = text;
     this.index = 0;
+    this.flexible = flexible;
 
     const result: Array<Token> = [];
     while (this.index < this.text.length + 1) {

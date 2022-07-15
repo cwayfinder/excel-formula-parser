@@ -24,14 +24,14 @@ export class Token {
       this.value = false;
     }
 
-    // Check if value is number
-    else if (isNumber(value)) {
-      this.value = Number(value);
-    }
-
     // Check if value is array
     else if (value.startsWith('\[')) {
       this.value = JSON.parse(value.replace(/'/g, '"'));
+    }
+
+    // Check if value is number
+    else if (isNumber(value)) {
+      this.value = Number(value);
     }
 
     // Otherwise save value without quotes
