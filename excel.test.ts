@@ -70,6 +70,15 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml('=EQ(./person/firstName, 1000)')).toContain('<span class=\"value\">1000</span>');
         expect(excel.toHtml('=EQ(./person/firstName, 100.25)')).toContain('<span class=\"value\">100.25</span>');
         expect(excel.toHtml('=EQ(./person/firstName , 2)')).toContain('<span class=\"value\">2</span>');
+        expect(excel.toHtml('=EQ(/person/firstName, 2)')).toEqual(
+            '<div>=' +
+            '<span class=\"function\">EQ</span>' +
+            '<span class=\"paren-deep-1\">(</span>' +
+            '<span class=\"path\">/person/firstName</span>, ' +
+            '<span class=\"value\">2</span>' +
+            '<span class=\"paren-deep-1\">)</span>' +
+            '</div>'
+        );
     });
 
     test('Testing parsing arrays', () => {
