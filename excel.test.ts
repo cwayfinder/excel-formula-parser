@@ -56,6 +56,7 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml('=EQ(./person/firstName, true)')).toContain('<span class=\"path\">./person/firstName</span>');
         expect(excel.toHtml('=EQ(../person/firstName, true)')).toContain('<span class=\"path\">../person/firstName</span>');
         expect(excel.toHtml('=EQ(../person/./firstName/../lastname, true)')).toContain('<span class=\"path\">../person/./firstName/../lastname</span>');
+        expect(excel.toHtml('=EQ(., true)')).toContain('<span class=\"path\">.</span>');
         expect(() => { excel.toHtml(`=EQ(../person/./firstName/.../lastname, true)`)}).toThrow();
         expect(() => { excel.toHtml(`=EQ(.../person/firstName, true)`)}).toThrow();
     });
