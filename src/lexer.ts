@@ -38,12 +38,6 @@ export class Lexer {
       this.advance();
     }
 
-    // Tokenize EQUAL token type
-    if (this.getCurrentLine().startsWith('=')) {
-      this.advance();
-      return new Token('EQUAL', '=', this.index, this.text);
-    }
-
     // Tokenize LPAREN token type
     if (this.getCurrentLine().startsWith('(')) {
       this.advance();
@@ -60,14 +54,6 @@ export class Lexer {
     if (this.getCurrentLine().startsWith(',')) {
       this.advance();
       return new Token('COMMA', ',', this.index, this.text);
-    }
-
-    // Tokenize PATH token type
-    // Regex used: https://regex101.com/r/wbhU62/1
-    const path = this.getCurrentLine().match(/^\.?(?:\.?\/(?:[\w\.\/](?!\.\.\.+))*\/*|(?=[\,\) ]))/);
-    if (path) {
-      this.advance(path[0].length);
-      return new Token('PATH', path[0], this.index, this.text);
     }
 
     // Tokenize bool as VALUE token types

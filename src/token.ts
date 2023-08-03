@@ -1,8 +1,8 @@
 import { isNumber } from './utils';
 
 export type TokenType =
-  'EQUAL' | 'LPAREN' | 'RPAREN' | 'COMMA' |  // Single-character
-  'FUNCVAR' | 'PATH' | 'VALUE' |  // Entities
+  'LPAREN' | 'RPAREN' | 'COMMA' |  // Single-character
+  'FUNCVAR' | 'VALUE' |  // Entities
   'EOF';  // Misc
 
 

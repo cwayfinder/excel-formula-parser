@@ -62,7 +62,7 @@ export class InterpreterToFormula extends InterpreterBase {
   }
 
   interpret(tree: ASTNode): string {
-    return '=' + this.visitNode(tree);
+    return this.visitNode(tree);
   }
 }
 
@@ -124,6 +124,6 @@ export class InterpreterToHtml extends InterpreterBase {
 
   interpret(tree: ASTNode): string {
     this.currentDeep = 1;
-    return `<div>=${this.visitNode(tree)}</div>`;
+    return `<div>${this.visitNode(tree)}</div>`;
   }
 }
