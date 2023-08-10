@@ -89,6 +89,11 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml(`EQ(person, ['name', 'lastname', 'age'])`)).toContain(expectedStringArray);
     });
 
+    test('Testing quotes', () => {
+        expect(excel.toHtml(`EQ(VALUE('#firstName'), 'John')`)).toContain(`<span class="value">'John'</span>`);
+        expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`)).toContain(`<span class="value">'John'</span>`);
+    })
+
     test('toHtml(tree) with invalid Excel-like formula should throw exception', () => {
         expect(() => { excel.toHtml(`NOT(EQ(investorType)), 'individual')`)}).toThrow();
         expect(() => { excel.toHtml(`NOT(EQ(investorType, 'individual'`)}).toThrow();
