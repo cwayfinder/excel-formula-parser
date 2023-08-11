@@ -2,7 +2,7 @@
  * Parser is responsible for building an abstract syntax tree (AST)
  */
 import { Token, TokenType } from './token';
-import { ASTFunctionNode, ASTNode, ASTPathNode, ASTValueNode, ASTVariableNode } from './node';
+import { ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
 
 export class Parser {
   tokens: Token[];
@@ -64,7 +64,6 @@ export class Parser {
 
   // Build Formula AST node formula : EQUAL entity EOF
   buildFormula(): ASTNode {
-    this.eat('EQUAL');
     const entity = this.buildEntity();
     this.eat('EOF');
     return entity;
@@ -98,8 +97,6 @@ export class Parser {
     switch (this.getCurrentToken().type) {
       case 'FUNCVAR':
         return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable();
-      case 'PATH':
-        return this.buildPath();
       case 'VALUE':
         return this.buildValue();
       default:
@@ -111,12 +108,6 @@ export class Parser {
     const variable = this.getCurrentToken().value;
     this.eat('FUNCVAR');
     return { type: 'variable', name: variable };
-  }
-
-  buildPath(): ASTPathNode {
-    const path = this.getCurrentToken().value;
-    this.eat('PATH');
-    return { type: 'path', path };
   }
 
   // Build Value AST node value : value
