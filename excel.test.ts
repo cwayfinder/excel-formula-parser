@@ -121,4 +121,15 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml(rule8String, true)).toEqual(html(rule8Html));
     });
 
+    test('Excel.toHtml() should escape nested html', () => {
+        expect(excel.toHtml(`TMPL('<i class="pi pi-plus"></i>')`, true)).toEqual(html(`
+            <div>
+                <span class="function">TMPL</span>
+                <span class="paren-deep-1">(</span>
+                <span class="value">'&lt;i class=&quot;pi pi-plus&quot;&gt;&lt;/i&gt;'</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `));
+    });
+
 });
