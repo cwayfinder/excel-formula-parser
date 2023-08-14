@@ -9,6 +9,7 @@ import {
     rule0Tree, rule0String,
     rule1Tree, rule1String,
     rule2Tree, rule2String,
+    rule2aTree, rule2aString,
     rule3Tree, rule3String,
     rule4Tree, rule4String,
     rule5Tree, rule5String,
@@ -26,6 +27,7 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(rule0String)).toEqual(rule0Tree);
         expect(excel.parse(rule1String)).toEqual(rule1Tree);
         expect(excel.parse(rule2String)).toEqual(rule2Tree);
+        expect(excel.parse(rule2aString)).toEqual(rule2aTree);
         expect(excel.parse(rule3String)).toEqual(rule3Tree);
         expect(excel.parse(rule4String)).toEqual(rule4Tree);
         expect(excel.parse(rule5String)).toEqual(rule5Tree);
