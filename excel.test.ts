@@ -119,6 +119,21 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml("EQ(", true)).toEqual(`<div><span class="function">EQ</span><span class="paren-deep-1">(</span></div>`);
     });
 
+    test('toHtml(tree, flexible=true) should parse complete formula', () => {
+        expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`, true)).toEqual(html(`
+            <div>
+                <span class="function">EQ</span>
+                <span class="paren-deep-1">(</span>
+                <span class="function">VALUE</span>
+                <span class="paren-deep-2">(</span>
+                <span class="value">'#firstName'</span>
+                <span class="paren-deep-2">)</span>,
+                <span class="value">'John'</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `));
+    });
+
     test('Excel.toHtml() parent deeps should loop from 0 to max deep level', () => {
         expect(excel.toHtml(rule8String, true)).toEqual(html(rule8Html));
     });
