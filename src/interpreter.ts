@@ -110,7 +110,7 @@ export class InterpreterToHtml extends InterpreterBase {
     return this.createHtmlSpan('path', node.path);
   }
 
-  protected visitValue(string: string): string {
+  protected override visitValue(string: string): string {
     return this.createHtmlSpan('value', super.visitValue(string));
   }
 
