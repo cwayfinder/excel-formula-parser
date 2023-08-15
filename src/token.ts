@@ -34,6 +34,17 @@ export class Token {
       this.value = Number(value);
     }
 
+    // Check if value is object
+    else if (value.startsWith('\{')) {
+      console.log(value)
+      // Ensure that keys are quoted
+      value = value.replace(/({|,) *(?:'|")?([\w\-]+)(?:'|")? *:/g, '$1 "$2": ');
+      // Ensure that values are quoted
+      value = value.replace(/: *(?:'|")?([^\{\}]+?)(?:'|")? *(,|})/g, ': "$1"$2');
+      console.log(value)
+      this.value = JSON.parse(value);
+    }
+
     // Otherwise save value without quotes
     else {
       this.value = value.replace(/((^'|'$)|(?:^"|"$))/g, '');
