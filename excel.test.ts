@@ -12,6 +12,9 @@ import {
     rule3Tree, rule3String,
     rule4Tree, rule4String,
     rule5Tree, rule5String,
+    ruleObjectTree, ruleObjectString,
+    ruleObject2Tree, ruleObject2String,
+    ruleTmplTree, ruleTmplString,
     rule6String, rule6Html,
     rule7String, rule7Html,
     rule8String, rule8Html,
@@ -29,8 +32,10 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(rule3String)).toEqual(rule3Tree);
         expect(excel.parse(rule4String)).toEqual(rule4Tree);
         expect(excel.parse(rule5String)).toEqual(rule5Tree);
+        expect(excel.parse(ruleObjectString)).toEqual(ruleObjectTree);
+        expect(excel.parse(ruleObject2String)).toEqual(ruleObject2Tree);
+        expect(excel.parse(ruleTmplString)).toEqual(ruleTmplTree);
     });
-
 });
 
 describe('Excel.stringify() end usage tests', () => {

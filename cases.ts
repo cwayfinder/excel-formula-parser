@@ -176,6 +176,49 @@ export const rule5Tree: ASTNode = {
   closed: true,
 };
 
+
+export const ruleObjectString = `HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt'})`;
+export const ruleObjectTree: ASTNode = {
+  type: 'function',
+  name: 'HTTP',
+  args: [
+    {
+      type: 'value',
+      value: { method: 'GET', url: 'https://api.github.com/users/defunkt' },
+    },
+  ],
+  closed: true,
+};
+
+
+export const ruleObject2String = `HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' }})`;
+export const ruleObject2Tree: ASTNode = {
+  type: 'function',
+  name: 'HTTP',
+  args: [
+    {
+      type: 'value',
+      value: { method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' } },
+    },
+  ],
+  closed: true,
+};
+
+
+export const ruleTmplString = `TMPL('<i class="{{:icon}}"></i>')`;
+export const ruleTmplTree: ASTNode = {
+  type: 'function',
+  name: 'TMPL',
+  args: [
+    {
+      type: 'value',
+      value: '<i class="{{:icon}}"></i>',
+    },
+  ],
+  closed: true,
+};
+
+
 export const rule6String = `NOT(EQ(legalForm, 'KG'))`;
 export const rule6Html = (`
     <div>
@@ -226,4 +269,3 @@ export const rule8Html = (`
       <span class="paren-deep-1">)</span>
     </div>
 `);
-
