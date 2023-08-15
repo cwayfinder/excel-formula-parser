@@ -1,4 +1,5 @@
 import { ASTFunctionNode, ASTNode, ASTPathNode, ASTValueNode, ASTVariableNode } from './node';
+import * as he from 'he';
 
 /* Base class Interpreter, this contains common methods for interpreters */
 abstract class InterpreterBase {
@@ -29,7 +30,8 @@ abstract class InterpreterBase {
   protected visitValue(item: string): string {
 
     if (typeof item === 'string') {
-      return `'${String(item)}'`;
+      const escaped_item: string = he.escape(item.toString());
+      return `'${String(escaped_item)}'`;
     }
 
     return item;
@@ -110,7 +112,7 @@ export class InterpreterToHtml extends InterpreterBase {
     return this.createHtmlSpan('path', node.path);
   }
 
-  protected visitValue(string: string): string {
+  protected override visitValue(string: string): string {
     return this.createHtmlSpan('value', super.visitValue(string));
   }
 

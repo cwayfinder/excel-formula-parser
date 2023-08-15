@@ -53,6 +53,18 @@ export const rule2Tree: ASTNode = {
 };
 
 
+export const rule2aString = 'EQ($person.firstName, true)';
+export const rule2aTree: ASTNode = {
+  type: 'function',
+  name: 'EQ',
+  args: [
+    { type: 'variable', name: '$person.firstName' },
+    { type: 'value', value: true },
+  ],
+  closed: true,
+};
+
+
 export const rule3String = `OR(EQ(firstName, true), NOT(EQ(companyType, 'nffe')))`;
 export const rule3Tree: ASTNode = {
   type: 'function',

@@ -64,14 +64,14 @@ export class Lexer {
     }
 
     // Tokenize FUNCVAR token type
-    const funcVar = this.getCurrentLine().match(/^[a-zA-Z]\w+/);
+    const funcVar = this.getCurrentLine().match(/^[a-zA-Z$#%][\w.]+/);
     if (funcVar) {
       this.advance(funcVar[0].length);
       return new Token('FUNCVAR', funcVar[0], this.index, this.text);
     }
 
     // Tokenize VALUE token type
-    const pattern = (this.flexible) ? /^(\'.+\'?|\".+\"?|\[.+\]?|\d+\.?\d*)/ : /^(\'.+?\'|\".+?\"|\[.+?\]|\d+\.?\d*)/;
+    const pattern = (this.flexible) ? /^(\'[^\']+\'?|\"[^\"]+\"?|\[[^\[\]]\]?|\d+\.?\d*)/ : /^(\'.+?\'|\".+?\"|\[.+?\]|\d+\.?\d*)/;
     const value = this.getCurrentLine().match(pattern);
     if (value) {
       this.advance(value[0].length);

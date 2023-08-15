@@ -9,6 +9,7 @@ import {
     rule0Tree, rule0String,
     rule1Tree, rule1String,
     rule2Tree, rule2String,
+    rule2aTree, rule2aString,
     rule3Tree, rule3String,
     rule4Tree, rule4String,
     rule5Tree, rule5String,
@@ -29,6 +30,7 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(rule0String)).toEqual(rule0Tree);
         expect(excel.parse(rule1String)).toEqual(rule1Tree);
         expect(excel.parse(rule2String)).toEqual(rule2Tree);
+        expect(excel.parse(rule2aString)).toEqual(rule2aTree);
         expect(excel.parse(rule3String)).toEqual(rule3Tree);
         expect(excel.parse(rule4String)).toEqual(rule4Tree);
         expect(excel.parse(rule5String)).toEqual(rule5Tree);
@@ -122,8 +124,34 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml("EQ(", true)).toEqual(`<div><span class="function">EQ</span><span class="paren-deep-1">(</span></div>`);
     });
 
+    test('toHtml(tree, flexible=true) should parse complete formula', () => {
+        expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`, true)).toEqual(html(`
+            <div>
+                <span class="function">EQ</span>
+                <span class="paren-deep-1">(</span>
+                <span class="function">VALUE</span>
+                <span class="paren-deep-2">(</span>
+                <span class="value">'#firstName'</span>
+                <span class="paren-deep-2">)</span>,
+                <span class="value">'John'</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `));
+    });
+
     test('Excel.toHtml() parent deeps should loop from 0 to max deep level', () => {
         expect(excel.toHtml(rule8String, true)).toEqual(html(rule8Html));
+    });
+
+    test('Excel.toHtml() should escape nested html', () => {
+        expect(excel.toHtml(`TMPL('<i class="pi pi-plus"></i>')`, true)).toEqual(html(`
+            <div>
+                <span class="function">TMPL</span>
+                <span class="paren-deep-1">(</span>
+                <span class="value">'&lt;i class=&quot;pi pi-plus&quot;&gt;&lt;/i&gt;'</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `));
     });
 
 });
