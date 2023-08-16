@@ -24,17 +24,20 @@ abstract class InterpreterBase {
       return `[${node.value.map(item => this.visitValue(item)).join(', ')}]`;
     }
 
+    if (node.value && typeof node.value === 'object') {
+      return `{ ${Object.entries(node.value).map(([key, value]) => `${key}: ${this.visitValue(value)}`).join(', ')} }`;
+    }
+
     return this.visitValue(node.value);
   }
 
-  protected visitValue(item: string): string {
-
+  protected visitValue(item: any): string {
     if (typeof item === 'string') {
       const escaped_item: string = he.escape(item.toString());
       return `'${String(escaped_item)}'`;
     }
 
-    return item;
+    return String(item);
   }
 
   protected visitArrayNodes(array: ASTNode[]): string {
@@ -112,8 +115,8 @@ export class InterpreterToHtml extends InterpreterBase {
     return this.createHtmlSpan('path', node.path);
   }
 
-  protected override visitValue(string: string): string {
-    return this.createHtmlSpan('value', super.visitValue(string));
+  protected override visitValue(value: any): string {
+    return this.createHtmlSpan('value', super.visitValue(value));
   }
 
   private createHtmlSpan(class_attr: string, value: string): string {

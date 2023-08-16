@@ -3,7 +3,7 @@
  */
 
 import { Excel } from './excel';
-import { html } from './test-utils';
+import { removeExtraSpaces } from './test-utils';
 import {
     ruleExtraTree, ruleExtraString,
     rule0Tree, rule0String,
@@ -56,7 +56,7 @@ describe('Excel.stringify() end usage tests', () => {
 
 describe('Excel.toHtml() end usage tests', () => {
     test('toHtml(tree) should return a builded html from Excel-like formula', () => {
-        expect(excel.toHtml(rule6String)).toEqual(html(rule6Html));
+        expect(excel.toHtml(rule6String)).toEqual(removeExtraSpaces(rule6Html));
     });
 
     test('Testing parsing variables', () => {
@@ -73,7 +73,7 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml('EQ(firstName, 1000)')).toContain(`<span class="value">1000</span>`);
         expect(excel.toHtml('EQ(firstName, 100.25)')).toContain(`<span class="value">100.25</span>`);
         expect(excel.toHtml('EQ(firstName , 2)')).toContain(`<span class="value">2</span>`);
-        expect(excel.toHtml('EQ(firstName, 2)')).toEqual(html(`
+        expect(excel.toHtml('EQ(firstName, 2)')).toEqual(removeExtraSpaces(`
             <div>
                 <span class="function">EQ</span>
                 <span class="paren-deep-1">(</span>
@@ -96,10 +96,43 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml(`EQ(person, ['name', 'lastname', 'age'])`)).toContain(expectedStringArray);
     });
 
+    test('Testing parsing objects', () => {
+        expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt'})`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="function">HTTP</span>
+                    <span class="paren-deep-1">(</span>
+                    {
+                        method: <span class="value">'GET'</span>, 
+                        url: <span class="value">'https://api.github.com/users/defunkt'</span>
+                    }
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+    });
+
+    test('Testing parsing nested objects', () => {
+        expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' }})`))
+          .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="function">HTTP</span>
+                    <span class="paren-deep-1">(</span>
+                    {
+                        method: <span class="value">'GET'</span>, 
+                        url: <span class="value">'https://api.github.com/users/defunkt'</span>
+                        headers: {
+                            'User-Agent': <span class="value">'request'</span>
+                        }
+                    }
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+    });
+
     test('Testing quotes', () => {
         expect(excel.toHtml(`EQ(VALUE('#firstName'), 'John')`)).toContain(`<span class="value">'John'</span>`);
         expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`)).toContain(`<span class="value">'John'</span>`);
-        expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`)).toEqual(html(`
+        expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`)).toEqual(removeExtraSpaces(`
             <div>
                 <span class="function">EQ</span>
                 <span class="paren-deep-1">(</span>
@@ -119,13 +152,13 @@ describe('Excel.toHtml() end usage tests', () => {
     });
 
     test('toHtml(tree, flexible=true) should parse incomplete formula and autocomplete quotes', () => {
-        expect(excel.toHtml(rule7String, true)).toEqual(html(rule7Html));
+        expect(excel.toHtml(rule7String, true)).toEqual(removeExtraSpaces(rule7Html));
         expect(excel.toHtml("EQ(legalForm, 'KG", true)).toContain(`<span class="value">'KG'</span>`);
         expect(excel.toHtml("EQ(", true)).toEqual(`<div><span class="function">EQ</span><span class="paren-deep-1">(</span></div>`);
     });
 
     test('toHtml(tree, flexible=true) should parse complete formula', () => {
-        expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`, true)).toEqual(html(`
+        expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`, true)).toEqual(removeExtraSpaces(`
             <div>
                 <span class="function">EQ</span>
                 <span class="paren-deep-1">(</span>
@@ -140,11 +173,11 @@ describe('Excel.toHtml() end usage tests', () => {
     });
 
     test('Excel.toHtml() parent deeps should loop from 0 to max deep level', () => {
-        expect(excel.toHtml(rule8String, true)).toEqual(html(rule8Html));
+        expect(excel.toHtml(rule8String, true)).toEqual(removeExtraSpaces(rule8Html));
     });
 
     test('Excel.toHtml() should escape nested html', () => {
-        expect(excel.toHtml(`TMPL('<i class="pi pi-plus"></i>')`, true)).toEqual(html(`
+        expect(excel.toHtml(`TMPL('<i class="pi pi-plus"></i>')`, true)).toEqual(removeExtraSpaces(`
             <div>
                 <span class="function">TMPL</span>
                 <span class="paren-deep-1">(</span>
