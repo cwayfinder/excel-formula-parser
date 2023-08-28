@@ -119,9 +119,9 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="paren-deep-1">(</span>
                     {
                         method: <span class="value">'GET'</span>, 
-                        url: <span class="value">'https://api.github.com/users/defunkt'</span>
+                        url: <span class="value">'https://api.github.com/users/defunkt'</span>,
                         headers: {
-                            'User-Agent': <span class="value">'request'</span>
+                            User-Agent: <span class="value">'request'</span>
                         }
                     }
                     <span class="paren-deep-1">)</span>

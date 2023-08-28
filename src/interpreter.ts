@@ -21,17 +21,33 @@ abstract class InterpreterBase {
 
   protected visitValueNode(node: ASTValueNode): string {
     if (Array.isArray(node.value)) {
-      return `[${node.value.map(item => this.visitValue(item)).join(', ')}]`;
+      return `[${node.value.map(item => this.processStringValue(item)).join(', ')}]`;
     }
 
     if (node.value && typeof node.value === 'object') {
-      return `{ ${Object.entries(node.value).map(([key, value]) => `${key}: ${this.visitValue(value)}`).join(', ')} }`;
+      return this.processObjectValue(node.value)
     }
 
-    return this.visitValue(node.value);
+    return this.processStringValue(node.value);
   }
 
-  protected visitValue(item: any): string {
+  protected processObjectValue(item: object) {
+    const object = Object.entries(item);
+    const key_values = object.map(([key, value]) => {
+      // Check for nested object values
+      let result_value = ""
+      if (typeof value === 'object' ) {
+        result_value = this.processObjectValue(value)
+      } else {
+        result_value = this.processStringValue(value)
+      }
+      return `${key}: ${result_value}`
+    })
+    return `{ ${key_values.join(', ')} }`;
+  }
+
+  protected processStringValue(item: any): string {
+
     if (typeof item === 'string') {
       const escaped_item: string = he.escape(item.toString());
       return `'${String(escaped_item)}'`;
@@ -115,8 +131,8 @@ export class InterpreterToHtml extends InterpreterBase {
     return this.createHtmlSpan('path', node.path);
   }
 
-  protected override visitValue(value: any): string {
-    return this.createHtmlSpan('value', super.visitValue(value));
+  protected override processStringValue(value: any): string {
+    return this.createHtmlSpan('value', super.processStringValue(value));
   }
 
   private createHtmlSpan(class_attr: string, value: string): string {
