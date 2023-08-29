@@ -71,11 +71,28 @@ export class Lexer {
     }
 
     // Tokenize VALUE token type
-    const pattern = (this.flexible) ? /^(\'[^\']+\'?|\"[^\"]+\"?|\[[^\[\]]\]?|{( *\w+: .+?},?}*)+|\d+\.?\d*)/ : /^(\'.+?\'|\".+?\"|\[.+?\]|{( *\w+: .+?},?}*)+|\d+\.?\d*)/;
-    const value = this.getCurrentLine().match(pattern);
-    if (value) {
-      this.advance(value[0].length);
-      return new Token('VALUE', value[0], this.index, this.text);
+    let childValuePatterns: RegExp[] = [
+     /^\'[^\']+\'/, // quoted values
+     /^\"[^\"]+\"/, // double quoted values
+     /^\[[^\[\]]+\]/, // array values
+    ]
+    if (this.flexible) {
+      childValuePatterns = childValuePatterns.map((pattern) => {
+        return new RegExp(pattern.source + '?');
+      });
+    }
+    childValuePatterns = [
+      ...childValuePatterns,
+      /^{(?: *\w+: .+?},?}*)+/, // object values
+      /^\d+\.?\d*/, // numbers
+    ]
+    // Finally test all possible patterns for VALUE token type
+    for (const pattern of childValuePatterns) {
+      const value = this.getCurrentLine().match(pattern);
+      if (value) {
+        this.advance(value[0].length);
+        return new Token('VALUE', value[0], this.index, this.text);
+      }
     }
 
     throw new SyntaxError(
