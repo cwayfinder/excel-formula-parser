@@ -83,7 +83,7 @@ export class Lexer {
     }
     childValuePatterns = [
       ...childValuePatterns,
-      /^{(?: *\w+: .+?},?}*)+/, // object values
+      /^{(?: *(?:\w+|\'\w+\'|\"\w+\"): .+?},?}*)+/, // object values
       /^\d+\.?\d*/, // numbers
     ]
     // Finally test all possible patterns for VALUE token type
