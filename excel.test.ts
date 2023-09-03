@@ -112,6 +112,22 @@ describe('Excel.toHtml() end usage tests', () => {
     });
 
     test('Testing parsing nested objects', () => {
+        expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { User-Agent: 'request' }})`))
+          .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="function">HTTP</span>
+                    <span class="paren-deep-1">(</span>
+                    {
+                        method: <span class="value">'GET'</span>, 
+                        url: <span class="value">'https://api.github.com/users/defunkt'</span>,
+                        headers: {
+                            User-Agent: <span class="value">'request'</span>
+                        }
+                    }
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+
         expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' }})`))
           .toEqual(removeExtraSpaces(`
                 <div>
