@@ -21,20 +21,39 @@ abstract class InterpreterBase {
 
   protected visitValueNode(node: ASTValueNode): string {
     if (Array.isArray(node.value)) {
-      return `[${node.value.map(item => this.visitValue(item)).join(', ')}]`;
+      return `[${node.value.map(item => this.processStringValue(item)).join(', ')}]`;
     }
 
-    return this.visitValue(node.value);
+    if (node.value && typeof node.value === 'object') {
+      return this.processObjectValue(node.value)
+    }
+
+    return this.processStringValue(node.value);
   }
 
-  protected visitValue(item: string): string {
+  protected processObjectValue(item: object) {
+    const object = Object.entries(item);
+    const key_values = object.map(([key, value]) => {
+      // Check for nested object values
+      let result_value = ""
+      if (typeof value === 'object' ) {
+        result_value = this.processObjectValue(value)
+      } else {
+        result_value = this.processStringValue(value)
+      }
+      return `${key}: ${result_value}`
+    })
+    return `{ ${key_values.join(', ')} }`;
+  }
+
+  protected processStringValue(item: any): string {
 
     if (typeof item === 'string') {
       const escaped_item: string = he.escape(item.toString());
       return `'${String(escaped_item)}'`;
     }
 
-    return item;
+    return String(item);
   }
 
   protected visitArrayNodes(array: ASTNode[]): string {
@@ -112,8 +131,8 @@ export class InterpreterToHtml extends InterpreterBase {
     return this.createHtmlSpan('path', node.path);
   }
 
-  protected override visitValue(string: string): string {
-    return this.createHtmlSpan('value', super.visitValue(string));
+  protected override processStringValue(value: any): string {
+    return this.createHtmlSpan('value', super.processStringValue(value));
   }
 
   private createHtmlSpan(class_attr: string, value: string): string {
