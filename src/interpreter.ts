@@ -1,4 +1,4 @@
-import { ASTFunctionNode, ASTNode, ASTPathNode, ASTValueNode, ASTVariableNode } from './node';
+import { ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
 import * as he from 'he';
 
 /* Base class Interpreter, this contains common methods for interpreters */
@@ -10,8 +10,6 @@ abstract class InterpreterBase {
         return this.visitFunctionNode(node);
       case 'variable':
         return this.visitVariableNode(node);
-      case 'path':
-        return this.visitPathNode(node);
       case 'value':
         return this.visitValueNode(node);
       default:
@@ -25,7 +23,7 @@ abstract class InterpreterBase {
     }
 
     if (node.value && typeof node.value === 'object') {
-      return this.processObjectValue(node.value)
+      return this.processObjectValue(node.value);
     }
 
     return this.processStringValue(node.value);
@@ -35,14 +33,14 @@ abstract class InterpreterBase {
     const object = Object.entries(item);
     const key_values = object.map(([key, value]) => {
       // Check for nested object values
-      let result_value = ""
-      if (typeof value === 'object' ) {
-        result_value = this.processObjectValue(value)
+      let result_value = '';
+      if (typeof value === 'object') {
+        result_value = this.processObjectValue(value);
       } else {
-        result_value = this.processStringValue(value)
+        result_value = this.processStringValue(value);
       }
-      return `${key}: ${result_value}`
-    })
+      return `${key}: ${result_value}`;
+    });
     return `{ ${key_values.join(', ')} }`;
   }
 
@@ -61,8 +59,8 @@ abstract class InterpreterBase {
   }
 
   protected abstract visitFunctionNode(node: ASTFunctionNode): string;
+
   protected abstract visitVariableNode(node: ASTVariableNode): string;
-  protected abstract visitPathNode(node: ASTPathNode): string;
 }
 
 /*
@@ -78,10 +76,6 @@ export class InterpreterToFormula extends InterpreterBase {
     return node.name;
   }
 
-  protected visitPathNode(node: ASTPathNode): string {
-    return node.path;
-  }
-
   interpret(tree: ASTNode): string {
     return this.visitNode(tree);
   }
@@ -95,7 +89,7 @@ export class InterpreterToHtml extends InterpreterBase {
   maxParenDeep: number;
   currentDeep: number;
 
-  constructor(maxParenDeep:number=3) {
+  constructor(maxParenDeep: number = 3) {
     super();
     this.maxParenDeep = maxParenDeep;
     this.currentDeep = 1;
@@ -115,7 +109,7 @@ export class InterpreterToHtml extends InterpreterBase {
     return result;
   }
 
-  protected incrementParenDeep() : void {
+  protected incrementParenDeep(): void {
     if (this.currentDeep < this.maxParenDeep) {
       this.currentDeep += 1;
     } else {
@@ -127,10 +121,6 @@ export class InterpreterToHtml extends InterpreterBase {
     return this.createHtmlSpan('variable', node.name);
   }
 
-  protected visitPathNode(node: ASTPathNode): string {
-    return this.createHtmlSpan('path', node.path);
-  }
-
   protected override processStringValue(value: any): string {
     return this.createHtmlSpan('value', super.processStringValue(value));
   }
@@ -139,7 +129,7 @@ export class InterpreterToHtml extends InterpreterBase {
     return `<span class="${class_attr}">${value}</span>`;
   }
 
-  setMaxParenDeep(newMaxParenDeep: number) : void {
+  setMaxParenDeep(newMaxParenDeep: number): void {
     this.maxParenDeep = newMaxParenDeep;
   }
 

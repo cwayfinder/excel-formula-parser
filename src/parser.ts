@@ -122,9 +122,8 @@ export class Parser {
    *
    * formula : EQUAL entity EOF
    * function : FUNCVAR LPAREN (entity COMMA?)+ RPAREN
-   * entity : (variable|path|value)
+   * entity : (variable|value)
    * variable : FUNCVAR
-   * path : PATH
    * value : VALUE
    */
   parse(tokens: Token[], flexible: boolean = false): ASTNode {

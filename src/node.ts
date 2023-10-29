@@ -14,14 +14,9 @@ export interface ASTVariableNode extends ASTNodeBase {
   name: string;
 }
 
-export interface ASTPathNode extends ASTNodeBase {
-  type: 'path';
-  path: string;
-}
-
 export interface ASTValueNode extends ASTNodeBase {
   type: 'value';
   value: any;
 }
 
-export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTPathNode | ASTValueNode;
+export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode;
