@@ -1,19 +1,19 @@
 import { ASTNode } from './src/node';
-import { InterpreterToFormula, InterpreterToHtml } from './src/interpreter';
+import { DefaultStringifier, HtmlStringifier } from './src/stringifier';
 import { Lexer } from './src/lexer';
 import { Parser } from './src/parser';
 
 export class Excel {
   lexer: Lexer;
   parser: Parser;
-  interpreterToFormula: InterpreterToFormula;
-  interpreterToHtml: InterpreterToHtml;
+  defaultStringifier: DefaultStringifier;
+  htmlStringifier: HtmlStringifier;
 
   constructor() {
     this.lexer = new Lexer();
     this.parser = new Parser();
-    this.interpreterToFormula = new InterpreterToFormula();
-    this.interpreterToHtml = new InterpreterToHtml();
+    this.defaultStringifier = new DefaultStringifier();
+    this.htmlStringifier = new HtmlStringifier();
   }
 
   parse(string: string): ASTNode {
@@ -22,13 +22,13 @@ export class Excel {
   }
 
   stringify(tree: ASTNode): string {
-    return this.interpreterToFormula.interpret(tree);
+    return this.defaultStringifier.stringify(tree);
   }
 
   toHtml(string: string, flexible: boolean = false, maxParenDeep: number = 3): string {
     const tokenized = this.lexer.tokenize(string, flexible);
     const ASTNode = this.parser.parse(tokenized, flexible);
-    this.interpreterToHtml.setMaxParenDeep(maxParenDeep);
-    return this.interpreterToHtml.interpret(ASTNode);
+    this.htmlStringifier.setMaxParenDeep(maxParenDeep);
+    return this.htmlStringifier.interpret(ASTNode);
   }
 }

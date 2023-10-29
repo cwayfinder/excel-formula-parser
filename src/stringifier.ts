@@ -2,7 +2,7 @@ import { ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node'
 import * as he from 'he';
 
 /* Base class Interpreter, this contains common methods for interpreters */
-abstract class InterpreterBase {
+abstract class Stringifier {
 
   protected visitNode(node: ASTNode): string {
     switch (node.type) {
@@ -66,7 +66,7 @@ abstract class InterpreterBase {
 /*
  * InterpreterToFormula is responsible for build an Excel-like formula from AST
  */
-export class InterpreterToFormula extends InterpreterBase {
+export class DefaultStringifier extends Stringifier {
 
   protected visitFunctionNode(node: ASTFunctionNode): string {
     return `${node.name}(${this.visitArrayNodes(node.args)})`;
@@ -76,7 +76,7 @@ export class InterpreterToFormula extends InterpreterBase {
     return node.name;
   }
 
-  interpret(tree: ASTNode): string {
+  stringify(tree: ASTNode): string {
     return this.visitNode(tree);
   }
 }
@@ -84,7 +84,7 @@ export class InterpreterToFormula extends InterpreterBase {
 /*
  * InterpreterToHtml is responsible for build an HTML Excel-like formula from AST
  */
-export class InterpreterToHtml extends InterpreterBase {
+export class HtmlStringifier extends Stringifier {
 
   maxParenDeep: number;
   currentDeep: number;
@@ -96,7 +96,7 @@ export class InterpreterToHtml extends InterpreterBase {
   }
 
   protected visitFunctionNode(node: ASTFunctionNode): string {
-    var result: string = '';
+    let result: string = '';
 
     const paren: string = `paren-deep-${this.currentDeep}`;
     this.incrementParenDeep();

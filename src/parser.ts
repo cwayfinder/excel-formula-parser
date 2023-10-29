@@ -45,7 +45,7 @@ export class Parser {
   // Same as eat() but optionally flexible with token TYPE
   // also returns bool if current token was eated or not
   flexibleEat(type: TokenType): boolean {
-    var wasEaten: boolean;
+    let wasEaten: boolean;
 
     if (this.flexible) {
       try {
@@ -87,12 +87,12 @@ export class Parser {
       args.push(this.buildEntity());
     } while (this.getCurrentToken().type === 'COMMA');
 
-    var closed: boolean = this.flexibleEat('RPAREN');
+    const closed: boolean = this.flexibleEat('RPAREN');
 
     return { type: 'function', name: functionName, args, closed };
   }
 
-  // Build ASTFunctionNode AST node entity : (function|variable|path|value)
+  // Build ASTFunctionNode AST node entity : (function|variable|value)
   buildEntity(): ASTNode {
     switch (this.getCurrentToken().type) {
       case 'FUNCVAR':
