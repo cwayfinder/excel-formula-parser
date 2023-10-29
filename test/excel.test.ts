@@ -2,7 +2,7 @@
  * Tests for excel.ts
  */
 
-import { Excel } from './excel';
+import { Excel } from '../src/excel';
 import { removeExtraSpaces } from './test-utils';
 import {
     ruleExtraTree, ruleExtraString,

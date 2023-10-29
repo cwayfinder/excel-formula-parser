@@ -4,7 +4,7 @@
 // - path - absolute (starts with '/') or relative (starts with './')
 // - value - true, false, 5, 'John Brown', [1,2,3] - basically anything that is not formula, variable or path
 
-import { ASTNode } from './src/node';
+import { ASTNode } from '../src/node';
 
 export const ruleExtraString = 'investorType';
 export const ruleExtraTree: ASTNode = { type: 'variable', name: 'investorType' };

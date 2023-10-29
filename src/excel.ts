@@ -1,7 +1,7 @@
-import { ASTNode } from './src/node';
-import { DefaultStringifier, HtmlStringifier } from './src/stringifier';
-import { Lexer } from './src/lexer';
-import { Parser } from './src/parser';
+import { ASTNode } from './node';
+import { DefaultStringifier, HtmlStringifier } from './stringifier';
+import { Lexer } from './lexer';
+import { Parser } from './parser';
 
 export class Excel {
   lexer: Lexer;
