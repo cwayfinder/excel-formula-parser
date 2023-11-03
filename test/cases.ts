@@ -1,8 +1,7 @@
 // There are 4 types of entities:
 // - function - IF, NOT, EQ, etc.
 // - variable
-// - path - absolute (starts with '/') or relative (starts with './')
-// - value - true, false, 5, 'John Brown', [1,2,3] - basically anything that is not formula, variable or path
+// - value - true, false, 5, 'John Brown', [1,2,3] - basically anything that is not function or variable
 
 import { ASTNode } from '../src/node';
 
