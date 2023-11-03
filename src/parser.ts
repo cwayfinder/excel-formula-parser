@@ -1,31 +1,31 @@
-/*
- * Parser is responsible for building an abstract syntax tree (AST)
- */
 import { Token, TokenType } from './token';
 import { ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
 
 export class Parser {
-  tokens: Token[];
-  index: number;
-  flexible: boolean;
+  tokens: Token[] = [];
+  index = 0;
+  flexible = false;
 
-  constructor() {
-    this.tokens = [];
+  parse(tokens: Token[], flexible = false): ASTNode {
+    /* Set global class states */
+    this.tokens = tokens;
     this.index = 0;
-    this.flexible = false;
+    this.flexible = flexible;
+
+    return this.buildFormula();
   }
 
-  getCurrentToken(): Token {
+  private getCurrentToken(): Token {
     return this.tokens[this.index];
   }
 
   // Return next token
-  peekToken(): Token | undefined {
+  private peekToken(): Token | undefined {
     const advancedIndex: number = this.index + 1;
     return (advancedIndex < this.tokens.length) ? this.tokens[advancedIndex] : undefined;
   }
 
-  unexpectedTokenMessage(): string {
+  private unexpectedTokenMessage(): string {
     throw new SyntaxError((
       `Unexpected "${this.getCurrentToken().value}"\n` +
       `formula ${this.getCurrentToken().line}\n` +
@@ -34,7 +34,7 @@ export class Parser {
   }
 
   // Compare current token type with a TYPE, if matchs, advance to next token, otherwise raise exception
-  eat(type: TokenType): void {
+  private eat(type: TokenType): void {
     if (this.getCurrentToken().type === type) {
       this.index += 1;
     } else {
@@ -43,8 +43,8 @@ export class Parser {
   }
 
   // Same as eat() but optionally flexible with token TYPE
-  // also returns bool if current token was eated or not
-  flexibleEat(type: TokenType): boolean {
+  // also returns bool if current token was eaten or not
+  private flexibleEat(type: TokenType): boolean {
     let wasEaten: boolean;
 
     if (this.flexible) {
@@ -63,14 +63,14 @@ export class Parser {
   }
 
   // Build Formula AST node formula : EQUAL entity EOF
-  buildFormula(): ASTNode {
+  private buildFormula(): ASTNode {
     const entity = this.buildEntity();
     this.eat('EOF');
     return entity;
   }
 
   // Build ASTFunctionNode AST node function : FUNCTION LPAREN (entity COMMA?)+ RPAREN
-  buildFunction(): ASTFunctionNode {
+  private buildFunction(): ASTFunctionNode {
     const functionName: string = this.getCurrentToken().value;
 
     this.eat('FUNCVAR');
@@ -93,7 +93,7 @@ export class Parser {
   }
 
   // Build ASTFunctionNode AST node entity : (function|variable|value)
-  buildEntity(): ASTNode {
+  private buildEntity(): ASTNode {
     switch (this.getCurrentToken().type) {
       case 'FUNCVAR':
         return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable();
@@ -104,34 +104,15 @@ export class Parser {
     }
   }
 
-  buildVariable(): ASTVariableNode {
+  private buildVariable(): ASTVariableNode {
     const variable = this.getCurrentToken().value;
     this.eat('FUNCVAR');
     return { type: 'variable', name: variable };
   }
 
-  // Build Value AST node value : value
-  buildValue(): ASTValueNode {
+  private buildValue(): ASTValueNode {
     const value = this.getCurrentToken().value;
     this.eat('VALUE');
     return { type: 'value', value };
-  }
-
-  /*
-   * Parse tokens into an AST
-   *
-   * formula : EQUAL entity EOF
-   * function : FUNCVAR LPAREN (entity COMMA?)+ RPAREN
-   * entity : (variable|value)
-   * variable : FUNCVAR
-   * value : VALUE
-   */
-  parse(tokens: Token[], flexible: boolean = false): ASTNode {
-    /* Set global class states */
-    this.tokens = tokens;
-    this.index = 0;
-    this.flexible = flexible;
-
-    return this.buildFormula();
   }
 }

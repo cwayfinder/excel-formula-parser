@@ -1,7 +1,8 @@
 import { ASTNode } from './node';
-import { DefaultStringifier, HtmlStringifier } from './stringifier';
 import { Lexer } from './lexer';
 import { Parser } from './parser';
+import { DefaultStringifier } from './default-stringifier';
+import { HtmlStringifier } from './html-stringifier';
 
 export class Excel {
   lexer: Lexer;
@@ -29,6 +30,6 @@ export class Excel {
     const tokenized = this.lexer.tokenize(string, flexible);
     const ASTNode = this.parser.parse(tokenized, flexible);
     this.htmlStringifier.setMaxParenDeep(maxParenDeep);
-    return this.htmlStringifier.interpret(ASTNode);
+    return this.htmlStringifier.stringify(ASTNode);
   }
 }

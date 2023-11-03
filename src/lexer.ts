@@ -4,15 +4,9 @@ import { Token } from './token';
  * Lexer is responsible for breaking a sentence apart into tokens
  */
 export class Lexer {
-  text: string;
-  index: number;
-  flexible: boolean;
-
-  constructor() {
-    this.text = '';
-    this.index = 0;
-    this.flexible = false;
-  }
+  text = '';
+  index = 0;
+  flexible = false;
 
   // Advance index n STEP
   advance(step: number = 1): void {
@@ -72,9 +66,9 @@ export class Lexer {
 
     // Tokenize VALUE token type
     let childValuePatterns: RegExp[] = [
-     /^\'[^\']+\'/, // quoted values
-     /^\"[^\"]+\"/, // double quoted values
-     /^\[[^\[\]]+\]/, // array values
+     /^'[^']+'/, // quoted values
+     /^"[^"]+"/, // double quoted values
+     /^\[[^\[\]]+]/, // array values
     ]
     if (this.flexible) {
       childValuePatterns = childValuePatterns.map((pattern) => {
@@ -83,7 +77,7 @@ export class Lexer {
     }
     childValuePatterns = [
       ...childValuePatterns,
-      /^{(?: *(?:\w+|\'\w+\'|\"\w+\"): .+?},?}*)+/, // object values
+      /^{(?: *(?:\w+|'\w+'|"\w+"): .+?},?}*)+/, // object values
       /^\d+\.?\d*/, // numbers
     ]
     // Finally test all possible patterns for VALUE token type

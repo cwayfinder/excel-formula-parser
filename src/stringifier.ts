@@ -1,8 +1,7 @@
 import { ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
 import * as he from 'he';
 
-/* Base class Interpreter, this contains common methods for interpreters */
-abstract class Stringifier {
+export abstract class Stringifier {
 
   protected visitNode(node: ASTNode): string {
     switch (node.type) {
@@ -45,10 +44,9 @@ abstract class Stringifier {
   }
 
   protected processStringValue(item: any): string {
-
     if (typeof item === 'string') {
-      const escaped_item: string = he.escape(item.toString());
-      return `'${String(escaped_item)}'`;
+      const escaped: string = he.escape(item.toString());
+      return `'${String(escaped)}'`;
     }
 
     return String(item);
@@ -61,80 +59,4 @@ abstract class Stringifier {
   protected abstract visitFunctionNode(node: ASTFunctionNode): string;
 
   protected abstract visitVariableNode(node: ASTVariableNode): string;
-}
-
-/*
- * InterpreterToFormula is responsible for build an Excel-like formula from AST
- */
-export class DefaultStringifier extends Stringifier {
-
-  protected visitFunctionNode(node: ASTFunctionNode): string {
-    return `${node.name}(${this.visitArrayNodes(node.args)})`;
-  }
-
-  protected visitVariableNode(node: ASTVariableNode): string {
-    return node.name;
-  }
-
-  stringify(tree: ASTNode): string {
-    return this.visitNode(tree);
-  }
-}
-
-/*
- * InterpreterToHtml is responsible for build an HTML Excel-like formula from AST
- */
-export class HtmlStringifier extends Stringifier {
-
-  maxParenDeep: number;
-  currentDeep: number;
-
-  constructor(maxParenDeep: number = 3) {
-    super();
-    this.maxParenDeep = maxParenDeep;
-    this.currentDeep = 1;
-  }
-
-  protected visitFunctionNode(node: ASTFunctionNode): string {
-    let result: string = '';
-
-    const paren: string = `paren-deep-${this.currentDeep}`;
-    this.incrementParenDeep();
-
-    result += this.createHtmlSpan('function', node.name);
-    result += this.createHtmlSpan(paren, '(');
-    result += this.visitArrayNodes(node.args);
-    result += (node.closed) ? this.createHtmlSpan(paren, ')') : ``;
-
-    return result;
-  }
-
-  protected incrementParenDeep(): void {
-    if (this.currentDeep < this.maxParenDeep) {
-      this.currentDeep += 1;
-    } else {
-      this.currentDeep = 1;
-    }
-  }
-
-  protected visitVariableNode(node: ASTVariableNode): string {
-    return this.createHtmlSpan('variable', node.name);
-  }
-
-  protected override processStringValue(value: any): string {
-    return this.createHtmlSpan('value', super.processStringValue(value));
-  }
-
-  private createHtmlSpan(class_attr: string, value: string): string {
-    return `<span class="${class_attr}">${value}</span>`;
-  }
-
-  setMaxParenDeep(newMaxParenDeep: number): void {
-    this.maxParenDeep = newMaxParenDeep;
-  }
-
-  interpret(tree: ASTNode): string {
-    this.currentDeep = 1;
-    return `<div>${this.visitNode(tree)}</div>`;
-  }
 }

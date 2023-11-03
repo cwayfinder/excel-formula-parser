@@ -16,7 +16,7 @@ export interface ASTVariableNode extends ASTNodeBase {
 
 export interface ASTValueNode extends ASTNodeBase {
   type: 'value';
-  value: any;
+  value: unknown;
 }
 
 export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode;

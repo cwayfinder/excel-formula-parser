@@ -37,9 +37,9 @@ export class Token {
     // Check if value is object
     else if (value.startsWith('\{')) {
       // Ensure that keys are quoted
-      value = value.replace(/({|,) *(?:'|")?([\w\-]+)(?:'|")? *:/g, '$1 "$2": ');
+      value = value.replace(/([{,]) *['"]?([\w\-]+)['"]? *:/g, '$1 "$2": ');
       // Ensure that values are quoted
-      value = value.replace(/: *(?:'|")?([^\{\}]+?)(?:'|")? *(,|})/g, ': "$1"$2');
+      value = value.replace(/: *['"]?([^{}]+?)['"]? *([,}])/g, ': "$1"$2');
       this.value = JSON.parse(value);
     }
 
