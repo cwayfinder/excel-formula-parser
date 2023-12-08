@@ -280,3 +280,11 @@ export const rule8Html = (`
       <span class="paren-deep-1">)</span>
     </div>
 `);
+
+export const ruleEmptyFunctionString = `init()`;
+export const ruleEmptyFunctionTree: ASTNode = {
+  type: 'function',
+  name: 'init',
+  args: [],
+  closed: true,
+};

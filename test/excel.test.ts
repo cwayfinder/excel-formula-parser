@@ -19,6 +19,7 @@ import {
     rule6String, rule6Html,
     rule7String, rule7Html,
     rule8String, rule8Html,
+    ruleEmptyFunctionTree, ruleEmptyFunctionString,
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -50,6 +51,7 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(rule3Tree)).toEqual(rule3String);
         expect(excel.stringify(rule4Tree)).toEqual(rule4String);
         expect(excel.stringify(rule5Tree)).toEqual(rule5String);
+        expect(excel.stringify(ruleEmptyFunctionTree)).toEqual(ruleEmptyFunctionString);
     });
 
 });
@@ -109,6 +111,17 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="paren-deep-1">)</span>
                 </div>
             `));
+    });
+
+    test('Testing parsing functions without arguments', () => {
+        const expectedStringArray = removeExtraSpaces(
+            `<div>
+                <span class="function">init</span>
+                <span class="paren-deep-1">(</span>
+                <span class="paren-deep-1">)</span>
+            </div>`
+        )
+        expect(excel.toHtml(`init()`)).toEqual(expectedStringArray);
     });
 
     test('Testing parsing nested objects', () => {
