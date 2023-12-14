@@ -50,6 +50,18 @@ export class Lexer {
       return new Token('COMMA', ',', this.index, this.text);
     }
 
+    // Tokenize ARRAY_START token type
+    if (this.getCurrentLine().startsWith("[")) {
+      this.advance();
+      return new Token('LBRACKET', '[', this.index, this.text);
+    }
+
+    // Tokenize ARRAY_END token type
+    if (this.getCurrentLine().startsWith("]")) {
+      this.advance();
+      return new Token('RBRACKET', ']', this.index, this.text);
+    }
+
     // Tokenize bool as VALUE token types
     const boolean = this.getCurrentLine().match(/^(true|TRUE|false|FALSE)(?=[^\w])/);
     if (boolean) {
@@ -68,7 +80,6 @@ export class Lexer {
     let childValuePatterns: RegExp[] = [
      /^'[^']+'/, // quoted values
      /^"[^"]+"/, // double quoted values
-     /^\[[^\[\]]+]/, // array values
     ]
     if (this.flexible) {
       childValuePatterns = childValuePatterns.map((pattern) => {

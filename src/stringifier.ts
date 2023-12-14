@@ -1,4 +1,4 @@
-import { ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
+import { ASTArrayNode, ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
 import * as he from 'he';
 
 export abstract class Stringifier {
@@ -11,16 +11,14 @@ export abstract class Stringifier {
         return this.visitVariableNode(node);
       case 'value':
         return this.visitValueNode(node);
+      case 'array':
+        return this.visitArrayNode(node);
       default:
         throw new Error(`Unrecognised AST node`);
     }
   }
 
   protected visitValueNode(node: ASTValueNode): string {
-    if (Array.isArray(node.value)) {
-      return `[${node.value.map(item => this.processStringValue(item)).join(', ')}]`;
-    }
-
     if (node.value && typeof node.value === 'object') {
       return this.processObjectValue(node.value);
     }
@@ -52,11 +50,10 @@ export abstract class Stringifier {
     return String(item);
   }
 
-  protected visitArrayNodes(array: ASTNode[]): string {
-    return array.map(arg => this.visitNode(arg)).join(', ');
-  }
-
   protected abstract visitFunctionNode(node: ASTFunctionNode): string;
 
   protected abstract visitVariableNode(node: ASTVariableNode): string;
+
+  protected abstract visitArrayNode(node: ASTArrayNode): string;
+
 }

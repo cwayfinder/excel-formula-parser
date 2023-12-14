@@ -173,10 +173,31 @@ export const rule5Tree: ASTNode = {
           name: 'IN',
           args: [
             {
-              type: 'value',
-              value: ['investment_company', 'custodial_institution', 'depositary_institution', 'specified_insurance_company'],
+              type: 'array',
+              items: [
+                {
+                  type: 'value',
+                  value: 'investment_company',
+                },
+                {
+                  type: 'value',
+                  value: 'custodial_institution',
+                },
+                {
+                  type: 'value',
+                  value: 'depositary_institution',
+                },
+                {
+                  type: 'value',
+                  value: 'specified_insurance_company',
+                },
+              ],
+              closed: true,
             },
-            { type: 'variable', name: 'companyType' },
+            {
+              type: 'variable',
+              name: 'companyType'
+            },
           ],
           closed: true,
         },
@@ -286,5 +307,46 @@ export const ruleEmptyFunctionTree: ASTNode = {
   type: 'function',
   name: 'init',
   args: [],
+  closed: true,
+};
+
+export const ruleNestedFunctionsString = `concat([prop('index'), '-', prop('value')])`;
+export const ruleNestedFunctionsTree: ASTNode = {
+  type: 'function',
+  name: 'concat',
+  args: [
+    {
+      type: 'array',
+      items: [
+        {
+          type: 'function',
+          name: 'prop',
+          args: [
+            {
+              type: 'value',
+              value: 'index'
+            }
+          ],
+          closed: true,
+        },
+        {
+          type: 'value',
+          value: '-'
+        },
+        {
+          type: 'function',
+          name: 'prop',
+          args: [
+            {
+              type: 'value',
+              value: 'value'
+            }
+          ],
+          closed: true,
+        },
+      ],
+      closed: true,
+    }
+  ],
   closed: true,
 };

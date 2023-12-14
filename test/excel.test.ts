@@ -20,6 +20,7 @@ import {
     rule7String, rule7Html,
     rule8String, rule8Html,
     ruleEmptyFunctionTree, ruleEmptyFunctionString,
+    ruleNestedFunctionsTree, ruleNestedFunctionsString,
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -52,6 +53,7 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(rule4Tree)).toEqual(rule4String);
         expect(excel.stringify(rule5Tree)).toEqual(rule5String);
         expect(excel.stringify(ruleEmptyFunctionTree)).toEqual(ruleEmptyFunctionString);
+        expect(excel.stringify(ruleNestedFunctionsTree)).toEqual(ruleNestedFunctionsString);
     });
 
 });
@@ -87,15 +89,63 @@ describe('Excel.toHtml() end usage tests', () => {
     });
 
     test('Testing parsing arrays', () => {
-        const expectedNumberArray = (
-            `[<span class="value">100.23</span>, <span class="value">232.46</span>, <span class="value">567.98</span>]`
-        );
+        const expectedNumberArray = removeExtraSpaces(`
+            <span class="paren-deep-2">[</span>
+                <span class="value">100.23</span>,
+                <span class="value">232.46</span>,
+                <span class="value">567.98</span>
+            <span class="paren-deep-2">]</span>
+        `);
         expect(excel.toHtml('EQ(person, [100.23, 232.46, 567.98])')).toContain(expectedNumberArray);
 
-        const expectedStringArray = (
-            `[<span class="value">'name'</span>, <span class="value">'lastname'</span>, <span class="value">'age'</span>]`
-        )
+        const expectedStringArray = removeExtraSpaces(`
+            <span class="paren-deep-2">[</span>
+                <span class="value">'name'</span>,
+                <span class="value">'lastname'</span>,
+                <span class="value">'age'</span>
+            <span class="paren-deep-2">]</span>
+        `)
         expect(excel.toHtml(`EQ(person, ['name', 'lastname', 'age'])`)).toContain(expectedStringArray);
+
+        const arrayWithNestedArrays = removeExtraSpaces(`
+            <div>
+                <span class="function">concat</span>
+                <span class="paren-deep-1">(</span>
+                    <span class="paren-deep-2">[</span>
+                        <span class="function">prop</span>
+                        <span class="paren-deep-3">(</span>
+                        <span class="value">'index'</span>
+                        <span class="paren-deep-3">)</span>,
+                        <span class="value">'-'</span>,
+                        <span class="function">prop</span>
+                        <span class="paren-deep-3">(</span>
+                        <span class="value">'value'</span>
+                        <span class="paren-deep-3">)</span>
+                    <span class="paren-deep-2">]</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `);
+        expect(excel.toHtml(`concat([prop('index'), '-', prop('value')])`)).toEqual(arrayWithNestedArrays);
+
+        const expectedArrayWithNestedFunctions = removeExtraSpaces(`
+            <div>
+                <span class="function">concat</span>
+                <span class="paren-deep-1">(</span>
+                    <span class="paren-deep-2">[</span>
+                        <span class="function">prop</span>
+                        <span class="paren-deep-3">(</span>
+                        <span class="value">'index'</span>
+                        <span class="paren-deep-3">)</span>,
+                        <span class="value">'-'</span>,
+                        <span class="function">prop</span>
+                        <span class="paren-deep-3">(</span>
+                        <span class="value">'value'</span>
+                        <span class="paren-deep-3">)</span>
+                    <span class="paren-deep-2">]</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `);
+        expect(excel.toHtml(`concat([prop('index'), '-', prop('value')])`)).toEqual(expectedArrayWithNestedFunctions);
     });
 
     test('Testing parsing objects', () => {

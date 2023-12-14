@@ -9,6 +9,12 @@ export interface ASTFunctionNode extends ASTNodeBase {
   closed: boolean;
 }
 
+export interface ASTArrayNode extends ASTNodeBase {
+  type: 'array';
+  items: ASTNode[];
+  closed: boolean;
+}
+
 export interface ASTVariableNode extends ASTNodeBase {
   type: 'variable';
   name: string;
@@ -19,4 +25,4 @@ export interface ASTValueNode extends ASTNodeBase {
   value: unknown;
 }
 
-export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode;
+export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode | ASTArrayNode;
