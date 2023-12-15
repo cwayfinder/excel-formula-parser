@@ -154,10 +154,12 @@ describe('Excel.toHtml() end usage tests', () => {
                 <div>
                     <span class="function">HTTP</span>
                     <span class="paren-deep-1">(</span>
-                    {
-                        method: <span class="value">'GET'</span>, 
-                        url: <span class="value">'https://api.github.com/users/defunkt'</span>
-                    }
+                        <span class="paren-deep-2">{</span>
+                            <span class="variable">method</span>:
+                            <span class="value">'GET'</span>,
+                            <span class="variable">url</span>:
+                            <span class="value">'https://api.github.com/users/defunkt'</span>
+                        <span class="paren-deep-2">}</span>
                     <span class="paren-deep-1">)</span>
                 </div>
             `));
@@ -175,21 +177,27 @@ describe('Excel.toHtml() end usage tests', () => {
     });
 
     test('Testing parsing nested objects', () => {
-        expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { User-Agent: 'request' }})`))
-          .toEqual(removeExtraSpaces(`
-                <div>
-                    <span class="function">HTTP</span>
-                    <span class="paren-deep-1">(</span>
-                    {
-                        method: <span class="value">'GET'</span>, 
-                        url: <span class="value">'https://api.github.com/users/defunkt'</span>,
-                        headers: {
-                            User-Agent: <span class="value">'request'</span>
-                        }
-                    }
-                    <span class="paren-deep-1">)</span>
-                </div>
-            `));
+
+        const htmlObject = removeExtraSpaces(`
+            <div>
+                <span class="function">HTTP</span>
+                <span class="paren-deep-1">(</span>
+                    <span class="paren-deep-2">{</span>
+                        <span class="variable">method</span>:
+                        <span class="value">'GET'</span>,
+                        <span class="variable">url</span>:
+                        <span class="value">'https://api.github.com/users/defunkt'</span>,
+                        <span class="variable">headers</span>:
+                        <span class="paren-deep-3">{</span>
+                            <span class="variable">User-Agent</span>:
+                            <span class="value">'request'</span>
+                        <span class="paren-deep-3">}</span>
+                    <span class="paren-deep-2">}</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `)
+
+        expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { User-Agent: 'request' }})`)).toEqual(htmlObject);
 
         // expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' }})`))
         //   .toEqual(removeExtraSpaces(`

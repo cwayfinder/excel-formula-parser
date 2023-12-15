@@ -3,6 +3,7 @@ import { isNumber } from './utils';
 export type TokenType =
   'LPAREN' | 'RPAREN' | 'COMMA' |  // Single-character
   'LBRACKET' | 'RBRACKET' | // Single-character
+  'LBRACE' | 'RBRACE' | 'COLON' | // Single-character
   'FUNCVAR' | 'VALUE' |  // Entities
   'EOF';  // Misc
 
@@ -28,15 +29,6 @@ export class Token {
     // Check if value is number
     else if (isNumber(value)) {
       this.value = Number(value);
-    }
-
-    // Check if value is object
-    else if (value.startsWith('\{')) {
-      // Ensure that keys are quoted
-      value = value.replace(/([{,]) *['"]?([\w\-]+)['"]? *:/g, '$1 "$2": ');
-      // Ensure that values are quoted
-      value = value.replace(/: *['"]?([^{}]+?)['"]? *([,}])/g, ': "$1"$2');
-      this.value = JSON.parse(value);
     }
 
     // Otherwise save value without quotes

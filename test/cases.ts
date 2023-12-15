@@ -215,8 +215,30 @@ export const ruleObjectTree: ASTNode = {
   name: 'HTTP',
   args: [
     {
-      type: 'value',
-      value: { method: 'GET', url: 'https://api.github.com/users/defunkt' },
+      type: 'object',
+      properties: [
+        {
+          key: {
+            type: 'variable',
+            name: 'method',
+          },
+          value: {
+            type: 'value',
+            value: 'GET',
+          }
+        },
+        {
+          key: {
+            type: 'variable',
+            name: 'url',
+          },
+          value: {
+            type: 'value',
+            value: 'https://api.github.com/users/defunkt',
+          }
+        },
+      ],
+      closed: true,
     },
   ],
   closed: true,
@@ -229,9 +251,53 @@ export const ruleObject2Tree: ASTNode = {
   name: 'HTTP',
   args: [
     {
-      type: 'value',
-      value: { method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' } },
-    },
+      type: 'object',
+      properties: [
+        {
+          key: {
+            type: 'variable',
+            name: 'method',
+          },
+          value: {
+            type: 'value',
+            value: 'GET',
+          }
+        },
+        {
+          key: {
+            type: 'variable',
+            name: 'url',
+          },
+          value: {
+            type: 'value',
+            value: 'https://api.github.com/users/defunkt',
+          }
+        },
+        {
+          key: {
+            type: 'variable',
+            name: 'headers',
+          },
+          value: {
+            type: 'object',
+            properties: [
+              {
+                key: {
+                  type: 'value',
+                  value: 'User-Agent',
+                },
+                value: {
+                  type: 'value',
+                  value: 'request',
+                },
+              },
+            ],
+            closed: true,
+          },
+        },
+      ],
+      closed: true,
+    }
   ],
   closed: true,
 };
