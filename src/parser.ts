@@ -1,5 +1,5 @@
 import { Token, TokenType } from './token';
-import { ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
+import { ASTArrayNode, ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
 
 export class Parser {
   tokens: Token[] = [];
@@ -76,7 +76,7 @@ export class Parser {
     this.eat('FUNCVAR');
     this.eat('LPAREN');
 
-    const args: Array<ASTNode> = [];
+    const args: ASTNode[] = [];
     do {
       if (this.getCurrentToken().type === 'COMMA') {
         this.eat('COMMA');
@@ -102,6 +102,8 @@ export class Parser {
         return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable();
       case 'VALUE':
         return this.buildValue();
+      case 'LBRACKET':
+        return this.buildArray();
       default:
         throw new SyntaxError(this.unexpectedTokenMessage());
     }
@@ -117,5 +119,27 @@ export class Parser {
     const value = this.getCurrentToken().value;
     this.eat('VALUE');
     return { type: 'value', value };
+  }
+
+  private buildArray(): ASTArrayNode {
+    this.eat('LBRACKET');
+
+    const items: ASTNode[] = [];
+    do {
+      if (this.getCurrentToken().type === 'COMMA') {
+        this.eat('COMMA');
+      }
+      if (this.flexible && this.getCurrentToken().type === 'EOF') {
+        break;
+      }
+      if (this.getCurrentToken().type === 'RBRACKET') {
+        break;
+      }
+      items.push(this.buildEntity());
+    } while (this.getCurrentToken().type === 'COMMA');
+
+    const closed: boolean = this.flexibleEat('RBRACKET');
+
+    return { type: 'array', items: items, closed: closed };
   }
 }

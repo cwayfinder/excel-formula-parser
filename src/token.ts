@@ -2,6 +2,7 @@ import { isNumber } from './utils';
 
 export type TokenType =
   'LPAREN' | 'RPAREN' | 'COMMA' |  // Single-character
+  'LBRACKET' | 'RBRACKET' | // Single-character
   'FUNCVAR' | 'VALUE' |  // Entities
   'EOF';  // Misc
 
@@ -22,11 +23,6 @@ export class Token {
       this.value = true;
     } else if (value.toLowerCase() === 'false') {
       this.value = false;
-    }
-
-    // Check if value is array
-    else if (value.startsWith('\[')) {
-      this.value = JSON.parse(value.replace(/'/g, '"'));
     }
 
     // Check if value is number

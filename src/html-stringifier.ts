@@ -1,4 +1,4 @@
-import { ASTFunctionNode, ASTNode, ASTVariableNode } from './node';
+import { ASTArrayNode, ASTFunctionNode, ASTNode, ASTVariableNode } from './node';
 import { Stringifier } from './stringifier';
 
 export class HtmlStringifier extends Stringifier {
@@ -27,7 +27,7 @@ export class HtmlStringifier extends Stringifier {
 
     result += this.createHtmlSpan('function', node.name);
     result += this.createHtmlSpan(paren, '(');
-    result += this.visitArrayNodes(node.args);
+    result += node.args.map(arg => this.visitNode(arg)).join(', ')
     result += (node.closed) ? this.createHtmlSpan(paren, ')') : ``;
 
     return result;
@@ -51,5 +51,23 @@ export class HtmlStringifier extends Stringifier {
 
   private createHtmlSpan(class_attr: string, value: string): string {
     return `<span class="${class_attr}">${value}</span>`;
+  }
+
+  protected visitArrayNode(node: ASTArrayNode): string {
+    let result: string = '';
+  
+    const paren: string = `paren-deep-${this.currentDeep}`;
+    this.incrementParenDeep();
+
+    result += this.createHtmlSpan(paren, '[');
+    result += node.items.map(node => {
+      const deepStored = this.currentDeep;
+      const result = this.visitNode(node)
+      this.currentDeep = deepStored;
+      return result
+    }).join(', ');
+    result += (node.closed) ? this.createHtmlSpan(paren, ']') : ``;
+
+    return result;
   }
 }

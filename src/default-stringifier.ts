@@ -1,4 +1,4 @@
-import { ASTFunctionNode, ASTNode, ASTVariableNode } from './node';
+import { ASTArrayNode, ASTFunctionNode, ASTNode, ASTVariableNode } from './node';
 import { Stringifier } from './stringifier';
 
 export class DefaultStringifier extends Stringifier {
@@ -7,10 +7,14 @@ export class DefaultStringifier extends Stringifier {
   }
 
   protected visitFunctionNode(node: ASTFunctionNode): string {
-    return `${node.name}(${this.visitArrayNodes(node.args)})`;
+    return `${node.name}(${node.args.map(node => this.visitNode(node)).join(', ')})`;
   }
 
   protected visitVariableNode(node: ASTVariableNode): string {
     return node.name;
+  }
+
+  protected visitArrayNode(node: ASTArrayNode): string {
+    return "[" + node.items.map(node => this.visitNode(node)).join(', ') + "]";
   }
 }
