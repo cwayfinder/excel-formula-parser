@@ -245,7 +245,7 @@ export const ruleObjectTree: ASTNode = {
 };
 
 
-export const ruleObject2String = `HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' }})`;
+export const ruleObject2String = `HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: {'User-Agent': 'request'}})`;
 export const ruleObject2Tree: ASTNode = {
   type: 'function',
   name: 'HTTP',
@@ -304,6 +304,7 @@ export const ruleObject2Tree: ASTNode = {
 
 
 export const ruleTmplString = `TMPL('<i class="{{:icon}}"></i>')`;
+export const escapedRuleTmplString = `TMPL('&lt;i class=&quot;{{:icon}}&quot;&gt;&lt;/i&gt;')`;
 export const ruleTmplTree: ASTNode = {
   type: 'function',
   name: 'TMPL',

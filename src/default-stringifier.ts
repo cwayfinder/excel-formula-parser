@@ -25,7 +25,17 @@ export class DefaultStringifier extends Stringifier {
   }
 
   protected visitObjectNode(node: ASTObjectNode): string {
-    return ""
+    let result: string = '';
+
+    result += '{';
+    result += node.properties.map(prop =>{
+      const key = this.visitNode(prop.key)
+      const value = this.visitNode(prop.value)
+      return `${key}: ${value}`
+    }).join(', ');
+    result += '}';
+
+    return result;
   }
 
 }

@@ -15,7 +15,7 @@ import {
     rule5Tree, rule5String,
     ruleObjectTree, ruleObjectString,
     ruleObject2Tree, ruleObject2String,
-    ruleTmplTree, ruleTmplString,
+    ruleTmplTree, ruleTmplString, escapedRuleTmplString,
     rule6String, rule6Html,
     rule7String, rule7Html,
     rule8String, rule8Html,
@@ -54,6 +54,9 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(rule5Tree)).toEqual(rule5String);
         expect(excel.stringify(ruleEmptyFunctionTree)).toEqual(ruleEmptyFunctionString);
         expect(excel.stringify(ruleNestedFunctionsTree)).toEqual(ruleNestedFunctionsString);
+        expect(excel.stringify(ruleObjectTree)).toEqual(ruleObjectString);
+        expect(excel.stringify(ruleObject2Tree)).toEqual(ruleObject2String);
+        expect(excel.stringify(ruleTmplTree)).toEqual(escapedRuleTmplString);
     });
 
 });
