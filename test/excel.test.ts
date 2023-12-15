@@ -232,6 +232,25 @@ describe('Excel.toHtml() end usage tests', () => {
         //     `));
     });
 
+    test('Testing parsing objects with function as key property', () => {
+        const htmlObject = removeExtraSpaces(`
+            <div>
+                <span class="function">func</span>
+                <span class="paren-deep-1">(</span>
+                    <span class="paren-deep-2">{</span>
+                        <span class="function">val</span>
+                        <span class="paren-deep-3">(</span>
+                        <span class="value">'field'</span>
+                        <span class="paren-deep-3">)</span>:
+                        <span class="value">'Contact'</span>
+                    <span class="paren-deep-2">}</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `)
+
+        expect(excel.toHtml(`func({ val('field'): 'Contact' })`)).toEqual(htmlObject);
+    });
+
     test('Testing quotes', () => {
         expect(excel.toHtml(`EQ(VALUE('#firstName'), 'John')`)).toContain(`<span class="value">'John'</span>`);
         expect(excel.toHtml(`EQ(VALUE("#firstName"), "John")`)).toContain(`<span class="value">'John'</span>`);
