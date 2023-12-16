@@ -62,6 +62,24 @@ export class Lexer {
       return new Token('RBRACKET', ']', this.index, this.text);
     }
 
+    // Tokenize LBRACE token type
+    if (this.getCurrentLine().startsWith("{")) {
+      this.advance();
+      return new Token('LBRACE', '{', this.index, this.text);
+    }
+
+    // Tokenize RBRACE token type
+    if (this.getCurrentLine().startsWith("}")) {
+      this.advance();
+      return new Token('RBRACE', '}', this.index, this.text);
+    }
+
+    // Tokenize COLON token type
+    if (this.getCurrentLine().startsWith(":")) {
+      this.advance();
+      return new Token('COLON', ':', this.index, this.text);
+    }
+
     // Tokenize bool as VALUE token types
     const boolean = this.getCurrentLine().match(/^(true|TRUE|false|FALSE)(?=[^\w])/);
     if (boolean) {
@@ -70,7 +88,7 @@ export class Lexer {
     }
 
     // Tokenize FUNCVAR token type
-    const funcVar = this.getCurrentLine().match(/^[a-zA-Z$#%][\w.]+/);
+    const funcVar = this.getCurrentLine().match(/^[a-zA-Z$#%][\w\-\_.]+/);
     if (funcVar) {
       this.advance(funcVar[0].length);
       return new Token('FUNCVAR', funcVar[0], this.index, this.text);
@@ -88,7 +106,6 @@ export class Lexer {
     }
     childValuePatterns = [
       ...childValuePatterns,
-      /^{(?: *(?:\w+|'\w+'|"\w+"): .+?},?}*)+/, // object values
       /^\d+\.?\d*/, // numbers
     ]
     // Finally test all possible patterns for VALUE token type

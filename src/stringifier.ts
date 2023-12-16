@@ -1,4 +1,11 @@
-import { ASTArrayNode, ASTFunctionNode, ASTNode, ASTValueNode, ASTVariableNode } from './node';
+import {
+  ASTArrayNode,
+  ASTFunctionNode,
+  ASTNode,
+  ASTObjectNode,
+  ASTValueNode,
+  ASTVariableNode
+} from './node';
 import * as he from 'he';
 
 export abstract class Stringifier {
@@ -13,6 +20,8 @@ export abstract class Stringifier {
         return this.visitValueNode(node);
       case 'array':
         return this.visitArrayNode(node);
+      case 'object':
+        return this.visitObjectNode(node);
       default:
         throw new Error(`Unrecognised AST node`);
     }
@@ -55,5 +64,7 @@ export abstract class Stringifier {
   protected abstract visitVariableNode(node: ASTVariableNode): string;
 
   protected abstract visitArrayNode(node: ASTArrayNode): string;
+
+  protected abstract visitObjectNode(node: ASTObjectNode): string;
 
 }

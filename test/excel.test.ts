@@ -15,7 +15,7 @@ import {
     rule5Tree, rule5String,
     ruleObjectTree, ruleObjectString,
     ruleObject2Tree, ruleObject2String,
-    ruleTmplTree, ruleTmplString,
+    ruleTmplTree, ruleTmplString, escapedRuleTmplString,
     rule6String, rule6Html,
     rule7String, rule7Html,
     rule8String, rule8Html,
@@ -54,6 +54,9 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(rule5Tree)).toEqual(rule5String);
         expect(excel.stringify(ruleEmptyFunctionTree)).toEqual(ruleEmptyFunctionString);
         expect(excel.stringify(ruleNestedFunctionsTree)).toEqual(ruleNestedFunctionsString);
+        expect(excel.stringify(ruleObjectTree)).toEqual(ruleObjectString);
+        expect(excel.stringify(ruleObject2Tree)).toEqual(ruleObject2String);
+        expect(excel.stringify(ruleTmplTree)).toEqual(escapedRuleTmplString);
     });
 
 });
@@ -154,10 +157,12 @@ describe('Excel.toHtml() end usage tests', () => {
                 <div>
                     <span class="function">HTTP</span>
                     <span class="paren-deep-1">(</span>
-                    {
-                        method: <span class="value">'GET'</span>, 
-                        url: <span class="value">'https://api.github.com/users/defunkt'</span>
-                    }
+                        <span class="paren-deep-2">{</span>
+                            <span class="variable">method</span>:
+                            <span class="value">'GET'</span>,
+                            <span class="variable">url</span>:
+                            <span class="value">'https://api.github.com/users/defunkt'</span>
+                        <span class="paren-deep-2">}</span>
                     <span class="paren-deep-1">)</span>
                 </div>
             `));
@@ -175,21 +180,27 @@ describe('Excel.toHtml() end usage tests', () => {
     });
 
     test('Testing parsing nested objects', () => {
-        expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { User-Agent: 'request' }})`))
-          .toEqual(removeExtraSpaces(`
-                <div>
-                    <span class="function">HTTP</span>
-                    <span class="paren-deep-1">(</span>
-                    {
-                        method: <span class="value">'GET'</span>, 
-                        url: <span class="value">'https://api.github.com/users/defunkt'</span>,
-                        headers: {
-                            User-Agent: <span class="value">'request'</span>
-                        }
-                    }
-                    <span class="paren-deep-1">)</span>
-                </div>
-            `));
+
+        const htmlObject = removeExtraSpaces(`
+            <div>
+                <span class="function">HTTP</span>
+                <span class="paren-deep-1">(</span>
+                    <span class="paren-deep-2">{</span>
+                        <span class="variable">method</span>:
+                        <span class="value">'GET'</span>,
+                        <span class="variable">url</span>:
+                        <span class="value">'https://api.github.com/users/defunkt'</span>,
+                        <span class="variable">headers</span>:
+                        <span class="paren-deep-3">{</span>
+                            <span class="variable">User-Agent</span>:
+                            <span class="value">'request'</span>
+                        <span class="paren-deep-3">}</span>
+                    <span class="paren-deep-2">}</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `)
+
+        expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { User-Agent: 'request' }})`)).toEqual(htmlObject);
 
         // expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt', headers: { 'User-Agent': 'request' }})`))
         //   .toEqual(removeExtraSpaces(`
@@ -222,6 +233,25 @@ describe('Excel.toHtml() end usage tests', () => {
         //             <span class="paren-deep-1">)</span>
         //         </div>
         //     `));
+    });
+
+    test('Testing parsing objects with function as key property', () => {
+        const htmlObject = removeExtraSpaces(`
+            <div>
+                <span class="function">func</span>
+                <span class="paren-deep-1">(</span>
+                    <span class="paren-deep-2">{</span>
+                        <span class="function">val</span>
+                        <span class="paren-deep-3">(</span>
+                        <span class="value">'field'</span>
+                        <span class="paren-deep-3">)</span>:
+                        <span class="value">'Contact'</span>
+                    <span class="paren-deep-2">}</span>
+                <span class="paren-deep-1">)</span>
+            </div>
+        `)
+
+        expect(excel.toHtml(`func({ val('field'): 'Contact' })`)).toEqual(htmlObject);
     });
 
     test('Testing quotes', () => {

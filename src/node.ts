@@ -15,6 +15,12 @@ export interface ASTArrayNode extends ASTNodeBase {
   closed: boolean;
 }
 
+export interface ASTObjectNode extends ASTNodeBase {
+  type: 'object';
+  properties: { key: ASTNode; value: ASTNode }[];
+  closed: boolean;
+}
+
 export interface ASTVariableNode extends ASTNodeBase {
   type: 'variable';
   name: string;
@@ -25,4 +31,4 @@ export interface ASTValueNode extends ASTNodeBase {
   value: unknown;
 }
 
-export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode | ASTArrayNode;
+export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode | ASTArrayNode | ASTObjectNode;
