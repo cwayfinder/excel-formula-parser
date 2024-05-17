@@ -1,8 +1,10 @@
 import {
   ASTArrayNode,
   ASTFunctionNode,
+  ASTOperatorChainNode,
   ASTNode,
   ASTObjectNode,
+  ASTInvertNode,
   ASTVariableNode
 } from './node';
 import { Stringifier } from './stringifier';
@@ -38,4 +40,28 @@ export class DefaultStringifier extends Stringifier {
     return result;
   }
 
+  protected visitInvertNode(node: ASTInvertNode): string {
+    return `!${this.visitNode(node.item)}`;
+  }
+
+  protected visitOperatorNode(node: ASTOperatorChainNode): string {
+    let operator: string = ''
+    if (node.type === 'plus') {
+      operator = ' + ';
+    } else if (node.type === 'minus') {
+      operator = ' - ';
+    } else if (node.type === 'multiply') {
+      operator = ' * ';
+    } else if (node.type === 'divide') {
+      operator = ' / ';
+    } else {
+      throw new Error(`Unrecognised operator type ${node.type}`);
+    }
+
+    let result: string = '';
+    result += node.items.map(node => this.visitNode(node)).join(operator);
+    result += (node.closed) ? operator : '';
+
+    return result;
+  }
 }

@@ -2,9 +2,11 @@ import { Token, TokenType } from './token';
 import {
   ASTArrayNode,
   ASTFunctionNode,
+  ASTOperatorChainNode,
   ASTNode,
   ASTObjectNode,
   ASTValueNode,
+  ASTInvertNode,
   ASTVariableNode
 } from './node';
 
@@ -32,6 +34,14 @@ export class Parser {
     return (advancedIndex < this.tokens.length) ? this.tokens[advancedIndex] : undefined;
   }
 
+  private expectedButFoundMessage(expected: TokenType): string {
+    throw new SyntaxError((
+      `Expected a "${expected}" token but found: "${this.getCurrentToken().value}"\n` +
+      `formula ${this.getCurrentToken().line}\n` +
+      `       ${' '.repeat(this.getCurrentToken().column)}^`
+    ));
+  }
+
   private unexpectedTokenMessage(): string {
     throw new SyntaxError((
       `Unexpected "${this.getCurrentToken().value}"\n` +
@@ -45,7 +55,7 @@ export class Parser {
     if (this.getCurrentToken().type === type) {
       this.index += 1;
     } else {
-      throw new SyntaxError(this.unexpectedTokenMessage());
+      throw new SyntaxError(this.expectedButFoundMessage(type));
     }
   }
 
@@ -104,6 +114,24 @@ export class Parser {
 
   // Build ASTFunctionNode AST node entity : (function|variable|value)
   private buildEntity(): ASTNode {
+    // Build operator chain if next token is +, -, *, /
+    if (this.peekToken() != null) {
+      switch (this.peekToken()?.type) {
+        case 'PLUS':
+          return this.buildPlusOperator();
+        case 'MINUS':
+          return this.buildMinusOperator();
+        case 'MULTIPLY':
+          return this.buildMultiplyOperator();
+        case 'DIVIDE':
+          return this.buildDivideOperator();
+      }
+    }
+    // Build entity
+    return this.buildEntityExcludingOperators();
+  }
+
+  private buildEntityExcludingOperators(): ASTNode {
     switch (this.getCurrentToken().type) {
       case 'FUNCVAR':
         return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable();
@@ -113,9 +141,52 @@ export class Parser {
         return this.buildArray();
       case 'LBRACE':
         return this.buildObject();
+      case 'INVERT':
+        return this.buildInvertOperator();
       default:
         throw new SyntaxError(this.unexpectedTokenMessage());
     }
+  }
+
+  private buildInvertOperator(): ASTInvertNode {
+    this.eat('INVERT');
+    const item: ASTNode = this.buildEntity();
+    return { type: 'invert', item };
+  }
+
+  private buildPlusOperator(): ASTOperatorChainNode {
+    return this.buildOperator('PLUS');
+  }
+
+  private buildMinusOperator(): ASTOperatorChainNode {
+    return this.buildOperator('MINUS');
+  }
+
+  private buildMultiplyOperator(): ASTOperatorChainNode {
+    return this.buildOperator('MULTIPLY');
+  }
+
+  private buildDivideOperator(): ASTOperatorChainNode {
+    return this.buildOperator('DIVIDE');
+  }
+
+  private buildOperator(
+    operator: 'PLUS' | 'MINUS' | 'MULTIPLY' | 'DIVIDE'
+  ): ASTOperatorChainNode {
+    let closed: boolean = false;
+    const items: ASTNode[] = [];
+    while (true) {
+      items.push(this.buildEntityExcludingOperators());
+      if (this.getCurrentToken().type === operator) {
+        this.eat(operator);
+        closed = false;
+      } else {
+        closed = true;
+        break
+      }
+    }
+    const ast_type = operator.toLowerCase() as 'plus' | 'minus' | 'multiply' | 'divide';
+    return { type: ast_type, items: items, closed: closed };
   }
 
   private buildVariable(): ASTVariableNode {

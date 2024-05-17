@@ -1,8 +1,10 @@
 import {
   ASTArrayNode,
   ASTFunctionNode,
+  ASTOperatorChainNode,
   ASTNode,
   ASTObjectNode,
+  ASTInvertNode,
   ASTVariableNode
 } from './node';
 import { Stringifier } from './stringifier';
@@ -94,5 +96,40 @@ export class HtmlStringifier extends Stringifier {
     result += (node.closed) ? this.createHtmlSpan(paren, '}') : ``;
 
     return result
+  }
+
+  protected visitInvertNode(node: ASTInvertNode): string {
+    const paren: string = `paren-deep-${this.currentDeep}`;
+
+    let result: string = '';
+    result += this.createHtmlSpan(paren, '!');
+    result += this.visitNode(node.item);
+
+    return result;
+  }
+
+  protected visitOperatorNode(node: ASTOperatorChainNode): string {
+    let operator: string = ''
+    if (node.type === 'plus') {
+      operator = ' + ';
+    } else if (node.type === 'minus') {
+      operator = ' - ';
+    } else if (node.type === 'multiply') {
+      operator = ' * ';
+    } else if (node.type === 'divide') {
+      operator = ' / ';
+    } else {
+      throw new Error(`Unrecognised operator type ${node.type}`);
+    }
+
+    const paren: string = `paren-deep-${this.currentDeep}`;
+    this.incrementParenDeep();
+    const operatorSpan: string = this.createHtmlSpan(paren, operator);
+  
+    let result: string = '';
+    result += node.items.map(node => this.visitNode(node)).join(operatorSpan);
+    result += (node.closed) ? '' : operatorSpan;
+
+    return result;
   }
 }
