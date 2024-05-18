@@ -43,4 +43,13 @@ export interface ASTInvertNode extends ASTNodeBase {
   item: ASTNode;
 }
 
-export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode | ASTArrayNode | ASTObjectNode | ASTInvertNode | ASTOperatorNode;
+export interface ASTGroupNode extends ASTNodeBase {
+  type: 'group';
+  item: ASTNode;
+  closed: boolean;
+}
+
+export type ASTNode =
+  ASTFunctionNode | ASTVariableNode | ASTValueNode |
+  ASTArrayNode | ASTObjectNode | ASTInvertNode |
+  ASTOperatorNode | ASTGroupNode;

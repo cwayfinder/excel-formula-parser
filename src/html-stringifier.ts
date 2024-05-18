@@ -5,7 +5,8 @@ import {
   ASTNode,
   ASTObjectNode,
   ASTInvertNode,
-  ASTVariableNode
+  ASTVariableNode,
+  ASTGroupNode,
 } from './node';
 import { Stringifier } from './stringifier';
 
@@ -108,4 +109,16 @@ export class HtmlStringifier extends Stringifier {
     return result;
   }
 
+  protected visitGroup(node: ASTGroupNode): string {
+    let result: string = '';
+
+    const paren: string = `paren-deep-${this.currentDeep}`;
+    this.incrementParenDeep();
+
+    result += this.createHtmlSpan(paren, '(');
+    result += this.visitNode(node.item);
+    result += (node.closed) ? this.createHtmlSpan(paren, ')') : ``;
+
+    return result;
+  }
 }

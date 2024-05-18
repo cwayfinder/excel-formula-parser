@@ -5,7 +5,8 @@ import {
   ASTNode,
   ASTObjectNode,
   ASTInvertNode,
-  ASTVariableNode
+  ASTVariableNode,
+  ASTGroupNode,
 } from './node';
 import { Stringifier } from './stringifier';
 
@@ -44,4 +45,11 @@ export class DefaultStringifier extends Stringifier {
     return `!${this.visitNode(node.item)}`;
   }
 
+  protected visitGroup(node: ASTGroupNode): string {
+    let result: string = '';
+    result += `(`;
+    result += this.visitNode(node.item);
+    result += (node.closed) ? ')' : '';
+    return result;
+  }
 }

@@ -6,7 +6,8 @@ import {
   ASTObjectNode,
   ASTValueNode,
   ASTInvertNode,
-  ASTVariableNode
+  ASTVariableNode,
+  ASTGroupNode
 } from './node';
 import * as he from 'he';
 
@@ -34,6 +35,8 @@ export abstract class Stringifier {
         return this.visitOperatorNode(node);
       case 'divide':
         return this.visitOperatorNode(node);
+      case 'group':
+        return this.visitGroup(node);
       default:
         throw new Error(`Unrecognised AST node`);
     }
@@ -103,4 +106,5 @@ export abstract class Stringifier {
 
   protected abstract visitInvertNode(node: ASTInvertNode): string;
 
+  protected abstract visitGroup(node: ASTGroupNode): string;
 }

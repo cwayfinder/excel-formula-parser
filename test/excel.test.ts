@@ -24,6 +24,7 @@ import {
     ruleInvertString, ruleInvertTree,
     ruleOperatorString, ruleOperatorTree,
     ruleInvertWithPlus, ruleInvertWithPlusTree,
+    ruleGroupString, ruleGroupTree,
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -45,6 +46,7 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(ruleInvertString)).toEqual(ruleInvertTree);
         expect(excel.parse(ruleOperatorString)).toEqual(ruleOperatorTree);
         expect(excel.parse(ruleInvertWithPlus)).toEqual(ruleInvertWithPlusTree);
+        expect(excel.parse(ruleGroupString)).toEqual(ruleGroupTree);
     });
 });
 
@@ -66,6 +68,7 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(ruleInvertTree)).toEqual(ruleInvertString);
         expect(excel.stringify(ruleOperatorTree)).toEqual(ruleOperatorString);
         expect(excel.stringify(ruleInvertWithPlusTree)).toEqual(ruleInvertWithPlus);
+        expect(excel.stringify(ruleGroupTree)).toEqual(ruleGroupString);
     });
 
 });
@@ -326,6 +329,21 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="value">4</span>
                     /
                     <span class="value">5</span>
+                </div>
+            `));
+    })
+
+    test('Testing grouping', () => {
+        expect(excel.toHtml(`(2 + 5) / 3`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">(</span>
+                        <span class="value">2</span>
+                        + 
+                        <span class="value">5</span>
+                    <span class="paren-deep-1">)</span>
+                    / 
+                    <span class="value">3</span>
                 </div>
             `));
     })

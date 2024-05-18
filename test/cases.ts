@@ -488,3 +488,29 @@ export const ruleInvertWithPlusTree: ASTNode = {
   },
   closed: true,
 };
+
+export const ruleGroupString = `(2 + 5) / 3`;
+export const ruleGroupTree: ASTNode = {
+  type: 'divide',
+  left: {
+    type: 'group',
+    item: {
+      type: 'plus',
+      left: {
+        type: 'value',
+        value: 2
+      },
+      right: {
+        type: 'value',
+        value: 5
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  right: {
+    type: 'value',
+    value: 3
+  },
+  closed: true,
+};
