@@ -60,7 +60,7 @@ export class DefaultStringifier extends Stringifier {
 
     let result: string = '';
     result += node.items.map(node => this.visitNode(node)).join(operator);
-    result += (node.closed) ? operator : '';
+    result += (node.closed) ? '' : operator;
 
     return result;
   }
