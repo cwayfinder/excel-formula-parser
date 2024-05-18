@@ -448,41 +448,43 @@ export const ruleInvertTree: ASTNode = {
 export const ruleOperatorString = `'prefix' + value('#name')`;
 export const ruleOperatorTree: ASTNode = {
   type: 'plus',
-  items: [
-    {
-      type: 'value',
-      value: 'prefix'
-    },
-    {
-      type: 'function',
-      name: 'value',
-      args: [
-        {
-          type: 'value',
-          value: '#name'
-        }
-      ],
-      closed: true,
-    }
-  ],
+  left: {
+    type: 'value',
+    value: 'prefix'
+  },
+  right: {
+    type: 'function',
+    name: 'value',
+    args: [
+      {
+        type: 'value',
+        value: '#name'
+      }
+    ],
+    closed: true,
+  },
   closed: true,
 };
 
-export const ruleInvertWithPlus = `!2 + 5`;
+export const ruleInvertWithPlus = `!!!2 + 5`;
 export const ruleInvertWithPlusTree: ASTNode = {
   type: 'plus',
-  items: [
-    {
+  left: {
+    type: 'invert',
+    item: {
       type: 'invert',
       item: {
-        type: 'value',
-        value: 2
+        type: 'invert',
+        item: {
+          type: 'value',
+          value: 2
+        }
       }
-    },
-    {
-      type: 'value',
-      value: 5
     }
-  ],
+  },
+  right: {
+    type: 'value',
+    value: 5
+  },
   closed: true,
 };

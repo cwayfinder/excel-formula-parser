@@ -1,7 +1,7 @@
 import {
   ASTArrayNode,
   ASTFunctionNode,
-  ASTOperatorChainNode,
+  ASTOperatorNode,
   ASTNode,
   ASTObjectNode,
   ASTValueNode,
@@ -71,6 +71,28 @@ export abstract class Stringifier {
     return String(item);
   }
 
+  protected visitOperatorNode(node: ASTOperatorNode): string {
+    let operator: string = ''
+    if (node.type === 'plus') {
+      operator = ' + ';
+    } else if (node.type === 'minus') {
+      operator = ' - ';
+    } else if (node.type === 'multiply') {
+      operator = ' * ';
+    } else if (node.type === 'divide') {
+      operator = ' / ';
+    } else {
+      throw new Error(`Unrecognised operator type ${node.type}`);
+    }
+
+    let result: string = '';
+    result += this.visitNode(node.left);
+    result += operator;
+    result += (node.closed && node.right) ? this.visitNode(node.right) : '';
+
+    return result;
+  }
+
   protected abstract visitFunctionNode(node: ASTFunctionNode): string;
 
   protected abstract visitVariableNode(node: ASTVariableNode): string;
@@ -81,5 +103,4 @@ export abstract class Stringifier {
 
   protected abstract visitInvertNode(node: ASTInvertNode): string;
 
-  protected abstract visitOperatorNode(node: ASTOperatorChainNode): string;
 }

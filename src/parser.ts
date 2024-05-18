@@ -2,7 +2,7 @@ import { Token, TokenType } from './token';
 import {
   ASTArrayNode,
   ASTFunctionNode,
-  ASTOperatorChainNode,
+  ASTOperatorNode,
   ASTNode,
   ASTObjectNode,
   ASTValueNode,
@@ -167,39 +167,35 @@ export class Parser {
     return { type: 'invert', item };
   }
 
-  private buildPlusOperator(): ASTOperatorChainNode {
+  private buildPlusOperator(): ASTOperatorNode {
     return this.buildOperator('PLUS');
   }
 
-  private buildMinusOperator(): ASTOperatorChainNode {
+  private buildMinusOperator(): ASTOperatorNode {
     return this.buildOperator('MINUS');
   }
 
-  private buildMultiplyOperator(): ASTOperatorChainNode {
+  private buildMultiplyOperator(): ASTOperatorNode {
     return this.buildOperator('MULTIPLY');
   }
 
-  private buildDivideOperator(): ASTOperatorChainNode {
+  private buildDivideOperator(): ASTOperatorNode {
     return this.buildOperator('DIVIDE');
   }
 
   private buildOperator(
     operator: 'PLUS' | 'MINUS' | 'MULTIPLY' | 'DIVIDE'
-  ): ASTOperatorChainNode {
-    let closed: boolean = false;
-    const items: ASTNode[] = [];
-    while (true) {
-      items.push(this.buildEntityExcludingOperators());
-      if (this.getCurrentToken().type === operator) {
-        this.eat(operator);
-        closed = false;
-      } else {
-        closed = true;
-        break
-      }
-    }
+  ): ASTOperatorNode {
+
+    const left: ASTNode = this.buildEntityExcludingOperators();
+    this.eat(operator);
+
+    const closed: boolean = this.getCurrentToken().type !== 'EOF';
+    const right: ASTNode | null = (closed) ? this.buildEntity() : null;
+
     const ast_type = operator.toLowerCase() as 'plus' | 'minus' | 'multiply' | 'divide';
-    return { type: ast_type, items: items, closed: closed };
+
+    return { type: ast_type, left: left, right: right, closed: closed };
   }
 
   private buildVariable(): ASTVariableNode {

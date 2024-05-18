@@ -199,7 +199,7 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">2</span>
-                    <span class="paren-deep-1"> + </span>
+                    + 
                     <span class="value">2</span>
                 </div>
             `));
@@ -207,13 +207,13 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">1</span>
-                    <span class="paren-deep-1"> + </span>
+                    + 
                     <span class="value">2</span>
-                    <span class="paren-deep-1"> + </span>
+                    + 
                     <span class="value">3</span>
-                    <span class="paren-deep-1"> + </span>
+                    + 
                     <span class="value">4</span>
-                    <span class="paren-deep-1"> + </span>
+                    + 
                     <span class="value">5</span>
                 </div>
             `));
@@ -221,11 +221,11 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">'prefix'</span>
-                    <span class="paren-deep-1"> + </span>
+                    + 
                     <span class="function">value</span>
-                    <span class="paren-deep-2">(</span>
+                    <span class="paren-deep-1">(</span>
                         <span class="value">'#name'</span>
-                    <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
                 </div>
             `));
     });
@@ -235,7 +235,7 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">2</span>
-                    <span class="paren-deep-1"> - </span>
+                    - 
                     <span class="value">2</span>
                 </div>
             `));
@@ -243,11 +243,11 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">'prefix'</span>
-                    <span class="paren-deep-1"> - </span>
+                    - 
                     <span class="function">value</span>
-                    <span class="paren-deep-2">(</span>
+                    <span class="paren-deep-1">(</span>
                         <span class="value">'#name'</span>
-                    <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
                 </div>
             `));
     });
@@ -257,7 +257,7 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">2</span>
-                    <span class="paren-deep-1"> * </span>
+                    * 
                     <span class="value">2</span>
                 </div>
             `));
@@ -265,11 +265,11 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">'prefix'</span>
-                    <span class="paren-deep-1"> * </span>
+                    * 
                     <span class="function">value</span>
-                    <span class="paren-deep-2">(</span>
+                    <span class="paren-deep-1">(</span>
                         <span class="value">'#name'</span>
-                    <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
                 </div>
             `));
     });
@@ -279,7 +279,7 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">2</span>
-                    <span class="paren-deep-1"> / </span>
+                    / 
                     <span class="value">2</span>
                 </div>
             `));
@@ -287,11 +287,11 @@ describe('Excel.toHtml() end usage tests', () => {
             .toEqual(removeExtraSpaces(`
                 <div>
                     <span class="value">'prefix'</span>
-                    <span class="paren-deep-1"> / </span>
+                    / 
                     <span class="function">value</span>
-                    <span class="paren-deep-2">(</span>
+                    <span class="paren-deep-1">(</span>
                         <span class="value">'#name'</span>
-                    <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
                 </div>
             `));
     });
@@ -300,12 +300,32 @@ describe('Excel.toHtml() end usage tests', () => {
         expect(excel.toHtml(`!!!2 + 2`))
             .toEqual(removeExtraSpaces(`
                 <div>
-                    <span class="paren-deep-2">!</span>
-                    <span class="paren-deep-2">!</span>
-                    <span class="paren-deep-2">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
                     <span class="value">2</span>
-                    <span class="paren-deep-1"> + </span>
+                    + 
                     <span class="value">2</span>
+                </div>
+            `));
+    })
+
+    test('Testing combination of multiple operators', () => {
+        expect(excel.toHtml(`!!!1 + 2 * 3 * 4 / 5`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="value">1</span>
+                    + 
+                    <span class="value">2</span>
+                    * 
+                    <span class="value">3</span>
+                    * 
+                    <span class="value">4</span>
+                    /
+                    <span class="value">5</span>
                 </div>
             `));
     })

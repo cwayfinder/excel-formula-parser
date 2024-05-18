@@ -15,9 +15,10 @@ export interface ASTArrayNode extends ASTNodeBase {
   closed: boolean;
 }
 
-export interface ASTOperatorChainNode extends ASTNodeBase {
+export interface ASTOperatorNode extends ASTNodeBase {
   type: 'plus' | 'minus' | 'multiply' | 'divide';
-  items: ASTNode[];
+  left: ASTNode;
+  right: ASTNode | null;
   closed: boolean;
 }
 
@@ -42,4 +43,4 @@ export interface ASTInvertNode extends ASTNodeBase {
   item: ASTNode;
 }
 
-export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode | ASTArrayNode | ASTObjectNode | ASTInvertNode | ASTOperatorChainNode;
+export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode | ASTArrayNode | ASTObjectNode | ASTInvertNode | ASTOperatorNode;
