@@ -200,6 +200,20 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="value">2</span>
                 </div>
             `));
+        expect(excel.toHtml(`1 + 2 + 3 + 4 + 5`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">1</span>
+                    <span class="paren-deep-1"> + </span>
+                    <span class="value">2</span>
+                    <span class="paren-deep-1"> + </span>
+                    <span class="value">3</span>
+                    <span class="paren-deep-1"> + </span>
+                    <span class="value">4</span>
+                    <span class="paren-deep-1"> + </span>
+                    <span class="value">5</span>
+                </div>
+            `));
         expect(excel.toHtml(`'prefix' + value('#name')`))
             .toEqual(removeExtraSpaces(`
                 <div>
