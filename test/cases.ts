@@ -467,3 +467,22 @@ export const ruleOperatorTree: ASTNode = {
   ],
   closed: true,
 };
+
+export const ruleInvertWithPlus = `!2 + 5`;
+export const ruleInvertWithPlusTree: ASTNode = {
+  type: 'plus',
+  items: [
+    {
+      type: 'invert',
+      item: {
+        type: 'value',
+        value: 2
+      }
+    },
+    {
+      type: 'value',
+      value: 5
+    }
+  ],
+  closed: true,
+};

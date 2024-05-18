@@ -29,8 +29,8 @@ export class Parser {
   }
 
   // Return next token
-  private peekToken(): Token | undefined {
-    const advancedIndex: number = this.index + 1;
+  private peekToken(offset: number = 1): Token | undefined {
+    const advancedIndex: number = this.index + offset;
     return (advancedIndex < this.tokens.length) ? this.tokens[advancedIndex] : undefined;
   }
 
@@ -115,8 +115,18 @@ export class Parser {
   // Build ASTFunctionNode AST node entity : (function|variable|value)
   private buildEntity(): ASTNode {
     // Build operator chain if next token is +, -, *, /
-    if (this.peekToken() != null) {
-      switch (this.peekToken()?.type) {
+    let peekOffset = 0;
+    while (true) {
+      if (this.peekToken(peekOffset) == null) {
+        break
+      }
+      // For each invert, we need to see one more token ahead
+      // for example: "!!!!2 + 2", the "+" operator is 5 tokens to the right
+      if (this.peekToken(peekOffset)?.type === 'INVERT') {
+        peekOffset += 1;
+        continue
+      }
+      switch (this.peekToken(peekOffset + 1)?.type) {
         case 'PLUS':
           return this.buildPlusOperator();
         case 'MINUS':
@@ -125,7 +135,10 @@ export class Parser {
           return this.buildMultiplyOperator();
         case 'DIVIDE':
           return this.buildDivideOperator();
+        default:
+          break
       }
+      break
     }
     // Build entity
     return this.buildEntityExcludingOperators();
@@ -150,7 +163,7 @@ export class Parser {
 
   private buildInvertOperator(): ASTInvertNode {
     this.eat('INVERT');
-    const item: ASTNode = this.buildEntity();
+    const item: ASTNode = this.buildEntityExcludingOperators();
     return { type: 'invert', item };
   }
 

@@ -23,6 +23,7 @@ import {
     ruleNestedFunctionsTree, ruleNestedFunctionsString,
     ruleInvertString, ruleInvertTree,
     ruleOperatorString, ruleOperatorTree,
+    ruleInvertWithPlus, ruleInvertWithPlusTree,
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -43,6 +44,7 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(ruleTmplString)).toEqual(ruleTmplTree);
         expect(excel.parse(ruleInvertString)).toEqual(ruleInvertTree);
         expect(excel.parse(ruleOperatorString)).toEqual(ruleOperatorTree);
+        expect(excel.parse(ruleInvertWithPlus)).toEqual(ruleInvertWithPlusTree);
     });
 });
 
@@ -63,6 +65,7 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(ruleTmplTree)).toEqual(escapedRuleTmplString);
         expect(excel.stringify(ruleInvertTree)).toEqual(ruleInvertString);
         expect(excel.stringify(ruleOperatorTree)).toEqual(ruleOperatorString);
+        expect(excel.stringify(ruleInvertWithPlusTree)).toEqual(ruleInvertWithPlus);
     });
 
 });
@@ -292,6 +295,20 @@ describe('Excel.toHtml() end usage tests', () => {
                 </div>
             `));
     });
+
+    test('Testing combination of invert with operator', () => {
+        expect(excel.toHtml(`!!!2 + 2`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-2">!</span>
+                    <span class="paren-deep-2">!</span>
+                    <span class="paren-deep-2">!</span>
+                    <span class="value">2</span>
+                    <span class="paren-deep-1"> + </span>
+                    <span class="value">2</span>
+                </div>
+            `));
+    })
 
     test('Testing parsing objects', () => {
         expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt'})`))
