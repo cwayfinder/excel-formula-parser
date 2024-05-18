@@ -21,6 +21,8 @@ import {
     rule8String, rule8Html,
     ruleEmptyFunctionTree, ruleEmptyFunctionString,
     ruleNestedFunctionsTree, ruleNestedFunctionsString,
+    ruleInvertString, ruleInvertTree,
+    ruleOperatorString, ruleOperatorTree,
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -39,6 +41,8 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(ruleObjectString)).toEqual(ruleObjectTree);
         expect(excel.parse(ruleObject2String)).toEqual(ruleObject2Tree);
         expect(excel.parse(ruleTmplString)).toEqual(ruleTmplTree);
+        expect(excel.parse(ruleInvertString)).toEqual(ruleInvertTree);
+        expect(excel.parse(ruleOperatorString)).toEqual(ruleOperatorTree);
     });
 });
 
@@ -57,6 +61,8 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(ruleObjectTree)).toEqual(ruleObjectString);
         expect(excel.stringify(ruleObject2Tree)).toEqual(ruleObject2String);
         expect(excel.stringify(ruleTmplTree)).toEqual(escapedRuleTmplString);
+        expect(excel.stringify(ruleInvertTree)).toEqual(ruleInvertString);
+        expect(excel.stringify(ruleOperatorTree)).toEqual(ruleOperatorString);
     });
 
 });

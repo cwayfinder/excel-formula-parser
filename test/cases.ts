@@ -417,3 +417,53 @@ export const ruleNestedFunctionsTree: ASTNode = {
   ],
   closed: true,
 };
+
+export const ruleInvertString = `!equal(value('#actorType'), 'PERSON')`;
+export const ruleInvertTree: ASTNode = {
+  type: 'invert',
+  item: {
+    type: 'function',
+    name: 'equal',
+    args: [
+      {
+        type: 'function',
+        name: 'value',
+        args: [
+          {
+            type: 'value',
+            value: '#actorType'
+          }
+        ],
+        closed: true,
+      },
+      {
+        type: 'value',
+        value: 'PERSON'
+      }
+    ],
+    closed: true,
+  }
+}
+
+export const ruleOperatorString = `'prefix' + value('#name')`;
+export const ruleOperatorTree: ASTNode = {
+  type: 'plus',
+  items: [
+    {
+      type: 'value',
+      value: 'prefix'
+    },
+    {
+      type: 'function',
+      name: 'value',
+      args: [
+        {
+          type: 'value',
+          value: '#name'
+        }
+      ],
+      closed: true,
+    }
+  ],
+  closed: true,
+};
