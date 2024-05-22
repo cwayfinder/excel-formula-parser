@@ -114,9 +114,8 @@ export class Parser {
   }
 
   private buildExpression(): ASTNode {
-    let result: ASTNode = this.buildEntity();
-    // check if there is a next token PLUS, MINUS, MULTIPLY, DIVIDE
-    while (['PLUS', 'MINUS', 'MULTIPLY', 'DIVIDE'].includes(this.getCurrentToken().type)) {
+    let result: ASTNode = this.buildTerm();
+    while (['PLUS', 'MINUS'].includes(this.getCurrentToken().type)) {
       switch (this.getCurrentToken().type) {
         case 'PLUS':
           result = this.buildPlusOperator(result);
@@ -124,6 +123,20 @@ export class Parser {
         case 'MINUS':
           result = this.buildMinusOperator(result);
           break;
+        default:
+          break;
+      }
+    }
+    if (result == null) {
+      throw new SyntaxError(this.unexpectedTokenMessage());
+    }
+    return result;
+  }
+
+  private buildTerm(): ASTNode {
+    let result: ASTNode = this.buildEntity();
+    while (['MULTIPLY', 'DIVIDE'].includes(this.getCurrentToken().type)) {
+      switch (this.getCurrentToken().type) {
         case 'MULTIPLY':
           result = this.buildMultiplyOperator(result);
           break;
@@ -173,31 +186,45 @@ export class Parser {
   }
 
   private buildPlusOperator(left: ASTNode): ASTOperatorNode {
-    return this.buildOperator(left, 'PLUS');
+    return this.buildExprOperator(left, 'PLUS');
   }
 
   private buildMinusOperator(left: ASTNode): ASTOperatorNode {
-    return this.buildOperator(left, 'MINUS');
+    return this.buildExprOperator(left, 'MINUS');
+  }
+
+  private buildExprOperator(
+    left: ASTNode,
+    operator: 'PLUS' | 'MINUS'
+  ): ASTOperatorNode {
+    this.eat(operator);
+
+    const closed: boolean = this.getCurrentToken().type !== 'EOF';
+    const right: ASTNode | null = (closed) ? this.buildTerm() : null;
+
+    const ast_type = operator.toLowerCase() as 'plus' | 'minus';
+
+    return { type: ast_type, left: left, right: right, closed: closed };
   }
 
   private buildMultiplyOperator(left: ASTNode): ASTOperatorNode {
-    return this.buildOperator(left, 'MULTIPLY');
+    return this.buildTermOperator(left, 'MULTIPLY');
   }
 
   private buildDivideOperator(left: ASTNode): ASTOperatorNode {
-    return this.buildOperator(left, 'DIVIDE');
+    return this.buildTermOperator(left, 'DIVIDE');
   }
 
-  private buildOperator(
+  private buildTermOperator(
     left: ASTNode,
-    operator: 'PLUS' | 'MINUS' | 'MULTIPLY' | 'DIVIDE'
+    operator: 'DIVIDE' | 'MULTIPLY'
   ): ASTOperatorNode {
     this.eat(operator);
 
     const closed: boolean = this.getCurrentToken().type !== 'EOF';
     const right: ASTNode | null = (closed) ? this.buildEntity() : null;
 
-    const ast_type = operator.toLowerCase() as 'plus' | 'minus' | 'multiply' | 'divide';
+    const ast_type = operator.toLowerCase() as 'divide' | 'multiply';
 
     return { type: ast_type, left: left, right: right, closed: closed };
   }

@@ -25,6 +25,8 @@ import {
     ruleOperatorString, ruleOperatorTree,
     ruleInvertWithPlus, ruleInvertWithPlusTree,
     ruleGroupString, ruleGroupTree,
+    ruleOperatorPrecedenceString1, ruleOperatorPrecedenceTree1,
+    ruleOperatorPrecedenceString2, ruleOperatorPrecedenceTree2,
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -47,6 +49,10 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(ruleOperatorString)).toEqual(ruleOperatorTree);
         expect(excel.parse(ruleInvertWithPlus)).toEqual(ruleInvertWithPlusTree);
         expect(excel.parse(ruleGroupString)).toEqual(ruleGroupTree);
+        expect(excel.parse(ruleEmptyFunctionString)).toEqual(ruleEmptyFunctionTree);
+        expect(excel.parse(ruleNestedFunctionsString)).toEqual(ruleNestedFunctionsTree);
+        expect(excel.parse(ruleOperatorPrecedenceString1)).toEqual(ruleOperatorPrecedenceTree1);
+        expect(excel.parse(ruleOperatorPrecedenceString2)).toEqual(ruleOperatorPrecedenceTree2);
     });
 });
 
@@ -69,6 +75,8 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(ruleOperatorTree)).toEqual(ruleOperatorString);
         expect(excel.stringify(ruleInvertWithPlusTree)).toEqual(ruleInvertWithPlus);
         expect(excel.stringify(ruleGroupTree)).toEqual(ruleGroupString);
+        expect(excel.stringify(ruleOperatorPrecedenceTree1)).toEqual(ruleOperatorPrecedenceString1);
+        expect(excel.stringify(ruleOperatorPrecedenceTree2)).toEqual(ruleOperatorPrecedenceString2);
     });
 
 });

@@ -514,3 +514,79 @@ export const ruleGroupTree: ASTNode = {
   },
   closed: true,
 };
+
+export const ruleOperatorPrecedenceString1 = `1 + 2 * 3 / 4 - 5`;
+export const ruleOperatorPrecedenceTree1: ASTNode = {
+  type: 'minus',
+  left: {
+    type: 'plus',
+    left: {
+      type: 'value',
+      value: 1
+    },
+    right: {
+      type: 'divide',
+      left: {
+        type: 'multiply',
+        left: {
+          type: 'value',
+          value: 2
+        },
+        right: {
+          type: 'value',
+          value: 3
+        },
+        closed: true,
+      },
+      right: {
+        type: 'value',
+        value: 4
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  right: {
+    type: 'value',
+    value: 5
+  },
+  closed: true,
+};
+
+export const ruleOperatorPrecedenceString2 = `2 * 3 + 4 / 2 - 5`;
+export const ruleOperatorPrecedenceTree2: ASTNode = {
+  type: 'minus',
+  left: {
+    type: 'plus',
+    left: {
+      type: 'multiply',
+      left: {
+        type: 'value',
+        value: 2
+      },
+      right: {
+        type: 'value',
+        value: 3
+      },
+      closed: true,
+    },
+    right: {
+      type: 'divide',
+      left: {
+        type: 'value',
+        value: 4
+      },
+      right: {
+        type: 'value',
+        value: 2
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  right: {
+    type: 'value',
+    value: 5
+  },
+  closed: true,
+};
