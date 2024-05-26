@@ -27,7 +27,8 @@ import {
     ruleGroupString, ruleGroupTree,
     ruleOperatorPrecedenceString1, ruleOperatorPrecedenceTree1,
     ruleOperatorPrecedenceString2, ruleOperatorPrecedenceTree2,
-    ruleTernaryString, ruleTernaryTree
+    ruleTernaryString, ruleTernaryTree,
+    ruleChainedTernaryString, ruleChainedTernaryTree
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -55,6 +56,7 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(ruleOperatorPrecedenceString1)).toEqual(ruleOperatorPrecedenceTree1);
         expect(excel.parse(ruleOperatorPrecedenceString2)).toEqual(ruleOperatorPrecedenceTree2);
         expect(excel.parse(ruleTernaryString)).toEqual(ruleTernaryTree);
+        expect(excel.parse(ruleChainedTernaryString)).toEqual(ruleChainedTernaryTree);
     });
 });
 
@@ -80,6 +82,7 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(ruleOperatorPrecedenceTree1)).toEqual(ruleOperatorPrecedenceString1);
         expect(excel.stringify(ruleOperatorPrecedenceTree2)).toEqual(ruleOperatorPrecedenceString2);
         expect(excel.stringify(ruleTernaryTree)).toEqual(ruleTernaryString);
+        expect(excel.stringify(ruleChainedTernaryTree)).toEqual(ruleChainedTernaryString);
     });
 
 });

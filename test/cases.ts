@@ -630,3 +630,77 @@ export const ruleTernaryTree: ASTNode = {
   },
   closed: true,
 };
+
+export const ruleChainedTernaryString = `empty(value('#tags')) ? 'down' : empty(value('#tags2')) ? 13 + 2 : 14 / 7`;
+export const ruleChainedTernaryTree: ASTNode = {
+  type: 'ternary',
+  condition: {
+    type: 'function',
+    name: 'empty',
+    args: [
+      {
+        type: 'function',
+        name: 'value',
+        args: [
+          {
+            type: 'value',
+            value: '#tags'
+          }
+        ],
+        closed: true,
+      }
+    ],
+    closed: true,
+  },
+  ifTrue: {
+    type: 'value',
+    value: 'down'
+  },
+  ifFalse: {
+    type: 'ternary',
+    condition: {
+      type: 'function',
+      name: 'empty',
+      args: [
+        {
+          type: 'function',
+          name: 'value',
+          args: [
+            {
+              type: 'value',
+              value: '#tags2'
+            }
+          ],
+          closed: true,
+        }
+      ],
+      closed: true,
+    },
+    ifTrue: {
+      type: 'plus',
+      left: {
+        type: 'value',
+        value: 13
+      },
+      right: {
+        type: 'value',
+        value: 2
+      },
+      closed: true,
+    },
+    ifFalse: {
+      type: 'divide',
+      left: {
+        type: 'value',
+        value: 14
+      },
+      right: {
+        type: 'value',
+        value: 7
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  closed: true,
+};
