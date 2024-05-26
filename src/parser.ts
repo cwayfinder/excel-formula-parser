@@ -115,7 +115,7 @@ export class Parser {
   }
 
   private buildExpression(): ASTNode {
-    let result: ASTNode = this.buildTerm();
+    let result: ASTNode = this.buildTermIfNext();
     while (['PLUS', 'MINUS'].includes(this.getCurrentToken().type)) {
       switch (this.getCurrentToken().type) {
         case 'PLUS':
@@ -134,7 +134,7 @@ export class Parser {
     return result;
   }
 
-  private buildTerm(): ASTNode {
+  private buildTermIfNext(): ASTNode {
     let result: ASTNode = this.buildTernaryOperatorIfNext();
     while (['MULTIPLY', 'DIVIDE'].includes(this.getCurrentToken().type)) {
       switch (this.getCurrentToken().type) {
@@ -216,7 +216,7 @@ export class Parser {
     this.eat(operator);
 
     const closed: boolean = this.getCurrentToken().type !== 'EOF';
-    const right: ASTNode | null = (closed) ? this.buildTerm() : null;
+    const right: ASTNode | null = (closed) ? this.buildTermIfNext() : null;
 
     const ast_type = operator.toLowerCase() as 'plus' | 'minus';
 
