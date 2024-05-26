@@ -83,7 +83,7 @@ export class Parser {
 
   // Build Formula AST node formula : EQUAL entity EOF
   private buildFormula(): ASTNode {
-    const entity = this.buildExpression();
+    const entity = this.buildExpressionIfNext();
     this.eat('EOF');
     return entity;
   }
@@ -106,7 +106,7 @@ export class Parser {
       if (this.getCurrentToken().type === 'RPAREN') {
         break;
       }
-      args.push(this.buildExpression());
+      args.push(this.buildExpressionIfNext());
     } while (this.getCurrentToken().type === 'COMMA');
 
     const closed: boolean = this.flexibleEat('RPAREN');
@@ -114,7 +114,7 @@ export class Parser {
     return { type: 'function', name: functionName, args, closed };
   }
 
-  private buildExpression(): ASTNode {
+  private buildExpressionIfNext(): ASTNode {
     let result: ASTNode = this.buildTermIfNext();
     while (['PLUS', 'MINUS'].includes(this.getCurrentToken().type)) {
       switch (this.getCurrentToken().type) {
@@ -182,15 +182,15 @@ export class Parser {
     }
     // Ternary operator
     this.eat('QMARK');
-    const trueValue: ASTNode = this.buildExpression();
+    const trueValue: ASTNode = this.buildExpressionIfNext();
     this.eat('COLON');
-    const falseValue: ASTNode = this.buildExpression();
+    const falseValue: ASTNode = this.buildExpressionIfNext();
     return { type: 'ternary', condition: condition, ifTrue: trueValue, ifFalse: falseValue, closed: true };
   }
 
   private buildGroup(): ASTGroupNode {
     this.eat('LPAREN');
-    const entity: ASTNode = this.buildExpression();
+    const entity: ASTNode = this.buildExpressionIfNext();
     const closed: boolean = this.flexibleEat('RPAREN');
     return { type: 'group', item: entity, closed: closed };
   }
