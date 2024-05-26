@@ -180,12 +180,25 @@ export class Parser {
     if (this.getCurrentToken().type !== 'QMARK') {
       return condition;
     }
-    // Ternary operator
+    // Build ternary operator
+    let result: ASTTernaryNode = { type: 'ternary', condition: condition, ifTrue: null, ifFalse: null, closed: false };
+    // Build true child
     this.eat('QMARK');
-    const trueValue: ASTNode = this.buildExpressionIfNext();
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
+    result.ifTrue = this.buildExpressionIfNext();
+    // Build false child
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
     this.eat('COLON');
-    const falseValue: ASTNode = this.buildExpressionIfNext();
-    return { type: 'ternary', condition: condition, ifTrue: trueValue, ifFalse: falseValue, closed: true };
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
+    result.ifFalse = this.buildExpressionIfNext();
+    result.closed = true;
+    return result;
   }
 
   private buildGroup(): ASTGroupNode {

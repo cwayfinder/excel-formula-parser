@@ -52,8 +52,8 @@ export interface ASTGroupNode extends ASTNodeBase {
 export interface ASTTernaryNode extends ASTNodeBase {
   type: 'ternary';
   condition: ASTNode;
-  ifTrue: ASTNode;
-  ifFalse: ASTNode;
+  ifTrue: ASTNode | null;
+  ifFalse: ASTNode | null;
   closed: boolean;
 }
 

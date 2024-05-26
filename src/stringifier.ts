@@ -100,11 +100,14 @@ export abstract class Stringifier {
   }
 
   protected visitTernaryNode(node: ASTTernaryNode): string {
-    let result: string = '';
-    result += this.visitNode(node.condition);
-    result += ' ? ';
-    result += this.visitNode(node.ifTrue);
-    result += ' : ';
+    let result: string =  this.visitNode(node.condition) + ' ? ';
+    if (node.ifTrue == null) {
+      return result;
+    }
+    result += this.visitNode(node.ifTrue) + ' : ';
+    if (node.ifFalse == null) {
+      return result;
+    }
     result += this.visitNode(node.ifFalse);
     return result;
   }

@@ -381,6 +381,21 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="value">'up'</span>
                 </div>
             `));
+        expect(excel.toHtml("empty(value('#tags')) ? 'down'"))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="function">empty</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="function">value</span>
+                        <span class="paren-deep-2">(</span>
+                            <span class="value">'#tags'</span>
+                        <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
+                    ? 
+                    <span class="value">'down'</span>
+                    : 
+                </div>
+            `));
     });
 
     test('Testing parsing objects', () => {
