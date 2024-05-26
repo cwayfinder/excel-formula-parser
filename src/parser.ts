@@ -9,6 +9,7 @@ import {
   ASTInvertNode,
   ASTVariableNode,
   ASTGroupNode,
+  ASTTernaryNode,
 } from './node';
 
 export class Parser {
@@ -134,7 +135,7 @@ export class Parser {
   }
 
   private buildTerm(): ASTNode {
-    let result: ASTNode = this.buildEntity();
+    let result: ASTNode = this.buildTernaryOperatorIfNext();
     while (['MULTIPLY', 'DIVIDE'].includes(this.getCurrentToken().type)) {
       switch (this.getCurrentToken().type) {
         case 'MULTIPLY':
@@ -170,6 +171,21 @@ export class Parser {
       default:
         throw new SyntaxError(this.unexpectedTokenMessage());
     }
+  }
+
+  private buildTernaryOperatorIfNext(): ASTTernaryNode | ASTNode {
+    // Build next entity, if ternary true present, take it as condition
+    // otherwise return entity as is
+    const condition: ASTNode = this.buildEntity();
+    if (this.getCurrentToken().type !== 'QMARK') {
+      return condition;
+    }
+    // Ternary operator
+    this.eat('QMARK');
+    const trueValue: ASTNode = this.buildExpression();
+    this.eat('COLON');
+    const falseValue: ASTNode = this.buildExpression();
+    return { type: 'ternary', condition: condition, ifTrue: trueValue, ifFalse: falseValue, closed: true };
   }
 
   private buildGroup(): ASTGroupNode {
@@ -222,7 +238,7 @@ export class Parser {
     this.eat(operator);
 
     const closed: boolean = this.getCurrentToken().type !== 'EOF';
-    const right: ASTNode | null = (closed) ? this.buildEntity() : null;
+    const right: ASTNode | null = (closed) ? this.buildTernaryOperatorIfNext() : null;
 
     const ast_type = operator.toLowerCase() as 'divide' | 'multiply';
 
@@ -255,7 +271,7 @@ export class Parser {
       if (this.getCurrentToken().type === 'RBRACKET') {
         break;
       }
-      items.push(this.buildEntity());
+      items.push(this.buildTernaryOperatorIfNext());
     } while (this.getCurrentToken().type === 'COMMA');
 
     const closed: boolean = this.flexibleEat('RBRACKET');
@@ -279,7 +295,7 @@ export class Parser {
       }
       const key: ASTNode = this.buildEntity();
       this.eat('COLON');
-      const value: ASTNode = this.buildEntity();
+      const value: ASTNode = this.buildTernaryOperatorIfNext();
       properties.push({ key: key, value: value});
     } while (this.getCurrentToken().type === 'COMMA');
 

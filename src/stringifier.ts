@@ -7,7 +7,8 @@ import {
   ASTValueNode,
   ASTInvertNode,
   ASTVariableNode,
-  ASTGroupNode
+  ASTGroupNode,
+  ASTTernaryNode,
 } from './node';
 import * as he from 'he';
 
@@ -37,6 +38,8 @@ export abstract class Stringifier {
         return this.visitOperatorNode(node);
       case 'group':
         return this.visitGroup(node);
+      case 'ternary':
+        return this.visitTernaryNode(node);
       default:
         throw new Error(`Unrecognised AST node`);
     }
@@ -93,6 +96,16 @@ export abstract class Stringifier {
     result += operator;
     result += (node.closed && node.right) ? this.visitNode(node.right) : '';
 
+    return result;
+  }
+
+  protected visitTernaryNode(node: ASTTernaryNode): string {
+    let result: string = '';
+    result += this.visitNode(node.condition);
+    result += ' ? ';
+    result += this.visitNode(node.ifTrue);
+    result += ' : ';
+    result += this.visitNode(node.ifFalse);
     return result;
   }
 

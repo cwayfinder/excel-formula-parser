@@ -590,3 +590,43 @@ export const ruleOperatorPrecedenceTree2: ASTNode = {
   },
   closed: true,
 };
+
+export const ruleTernaryString = `'new/chevron-' + empty(value('#tags')) ? 'down' : 'up'`;
+export const ruleTernaryTree: ASTNode = {
+  type: 'plus',
+  left: {
+    type: 'value',
+    value: 'new/chevron-'
+  },
+  right: {
+    type: 'ternary',
+    condition: {
+      type: 'function',
+      name: 'empty',
+      args: [
+        {
+          type: 'function',
+          name: 'value',
+          args: [
+            {
+              type: 'value',
+              value: '#tags'
+            }
+          ],
+          closed: true,
+        }
+      ],
+      closed: true,
+    },
+    ifTrue: {
+      type: 'value',
+      value: 'down'
+    },
+    ifFalse: {
+      type: 'value',
+      value: 'up'
+    },
+    closed: true,
+  },
+  closed: true,
+};

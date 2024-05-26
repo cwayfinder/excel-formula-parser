@@ -27,6 +27,7 @@ import {
     ruleGroupString, ruleGroupTree,
     ruleOperatorPrecedenceString1, ruleOperatorPrecedenceTree1,
     ruleOperatorPrecedenceString2, ruleOperatorPrecedenceTree2,
+    ruleTernaryString, ruleTernaryTree
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -53,6 +54,7 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(ruleNestedFunctionsString)).toEqual(ruleNestedFunctionsTree);
         expect(excel.parse(ruleOperatorPrecedenceString1)).toEqual(ruleOperatorPrecedenceTree1);
         expect(excel.parse(ruleOperatorPrecedenceString2)).toEqual(ruleOperatorPrecedenceTree2);
+        expect(excel.parse(ruleTernaryString)).toEqual(ruleTernaryTree);
     });
 });
 
@@ -77,6 +79,7 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(ruleGroupTree)).toEqual(ruleGroupString);
         expect(excel.stringify(ruleOperatorPrecedenceTree1)).toEqual(ruleOperatorPrecedenceString1);
         expect(excel.stringify(ruleOperatorPrecedenceTree2)).toEqual(ruleOperatorPrecedenceString2);
+        expect(excel.stringify(ruleTernaryTree)).toEqual(ruleTernaryString);
     });
 
 });
@@ -355,6 +358,27 @@ describe('Excel.toHtml() end usage tests', () => {
                 </div>
             `));
     })
+
+    test('Testing ternary conditional', () => {
+        expect(excel.toHtml("'new/chevron-' + empty(value('#tags')) ? 'down' : 'up'"))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">'new/chevron-'</span>
+                    + 
+                    <span class="function">empty</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="function">value</span>
+                        <span class="paren-deep-2">(</span>
+                            <span class="value">'#tags'</span>
+                        <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
+                    ? 
+                    <span class="value">'down'</span>
+                    : 
+                    <span class="value">'up'</span>
+                </div>
+            `));
+    });
 
     test('Testing parsing objects', () => {
         expect(excel.toHtml(`HTTP({method: 'GET', url: 'https://api.github.com/users/defunkt'})`))

@@ -49,7 +49,15 @@ export interface ASTGroupNode extends ASTNodeBase {
   closed: boolean;
 }
 
+export interface ASTTernaryNode extends ASTNodeBase {
+  type: 'ternary';
+  condition: ASTNode;
+  ifTrue: ASTNode;
+  ifFalse: ASTNode;
+  closed: boolean;
+}
+
 export type ASTNode =
   ASTFunctionNode | ASTVariableNode | ASTValueNode |
   ASTArrayNode | ASTObjectNode | ASTInvertNode |
-  ASTOperatorNode | ASTGroupNode;
+  ASTOperatorNode | ASTGroupNode | ASTTernaryNode;

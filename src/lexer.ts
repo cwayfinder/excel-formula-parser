@@ -110,6 +110,12 @@ export class Lexer {
       return new Token('COLON', ':', this.index, this.text);
     }
 
+    // Tokenize ternary QMARK token type
+    if (this.getCurrentLine().startsWith("?")) {
+      this.advance();
+      return new Token('QMARK', '?', this.index, this.text);
+    }
+  
     // Tokenize bool as VALUE token types
     const boolean = this.getCurrentLine().match(/^(true|TRUE|false|FALSE)(?=[^\w])/);
     if (boolean) {
