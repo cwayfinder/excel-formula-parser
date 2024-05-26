@@ -15,6 +15,13 @@ export interface ASTArrayNode extends ASTNodeBase {
   closed: boolean;
 }
 
+export interface ASTOperatorNode extends ASTNodeBase {
+  type: 'plus' | 'minus' | 'multiply' | 'divide';
+  left: ASTNode;
+  right: ASTNode | null;
+  closed: boolean;
+}
+
 export interface ASTObjectNode extends ASTNodeBase {
   type: 'object';
   properties: { key: ASTNode; value: ASTNode }[];
@@ -31,4 +38,27 @@ export interface ASTValueNode extends ASTNodeBase {
   value: unknown;
 }
 
-export type ASTNode = ASTFunctionNode | ASTVariableNode | ASTValueNode | ASTArrayNode | ASTObjectNode;
+export interface ASTInvertNode extends ASTNodeBase {
+  type: 'invert';
+  item: ASTNode | null;
+  closed: boolean;
+}
+
+export interface ASTGroupNode extends ASTNodeBase {
+  type: 'group';
+  item: ASTNode;
+  closed: boolean;
+}
+
+export interface ASTTernaryNode extends ASTNodeBase {
+  type: 'ternary';
+  condition: ASTNode;
+  ifTrue: ASTNode | null;
+  ifFalse: ASTNode | null;
+  closed: boolean;
+}
+
+export type ASTNode =
+  ASTFunctionNode | ASTVariableNode | ASTValueNode |
+  ASTArrayNode | ASTObjectNode | ASTInvertNode |
+  ASTOperatorNode | ASTGroupNode | ASTTernaryNode;

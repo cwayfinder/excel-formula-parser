@@ -2,10 +2,14 @@ import { Token, TokenType } from './token';
 import {
   ASTArrayNode,
   ASTFunctionNode,
+  ASTOperatorNode,
   ASTNode,
   ASTObjectNode,
   ASTValueNode,
-  ASTVariableNode
+  ASTInvertNode,
+  ASTVariableNode,
+  ASTGroupNode,
+  ASTTernaryNode,
 } from './node';
 
 export class Parser {
@@ -27,9 +31,17 @@ export class Parser {
   }
 
   // Return next token
-  private peekToken(): Token | undefined {
-    const advancedIndex: number = this.index + 1;
+  private peekToken(offset: number = 1): Token | undefined {
+    const advancedIndex: number = this.index + offset;
     return (advancedIndex < this.tokens.length) ? this.tokens[advancedIndex] : undefined;
+  }
+
+  private expectedButFoundMessage(expected: TokenType): string {
+    throw new SyntaxError((
+      `Expected a "${expected}" token but found: "${this.getCurrentToken().value}"\n` +
+      `formula ${this.getCurrentToken().line}\n` +
+      `       ${' '.repeat(this.getCurrentToken().column)}^`
+    ));
   }
 
   private unexpectedTokenMessage(): string {
@@ -45,7 +57,7 @@ export class Parser {
     if (this.getCurrentToken().type === type) {
       this.index += 1;
     } else {
-      throw new SyntaxError(this.unexpectedTokenMessage());
+      throw new SyntaxError(this.expectedButFoundMessage(type));
     }
   }
 
@@ -71,7 +83,7 @@ export class Parser {
 
   // Build Formula AST node formula : EQUAL entity EOF
   private buildFormula(): ASTNode {
-    const entity = this.buildEntity();
+    const entity = this.buildExpressionIfNext();
     this.eat('EOF');
     return entity;
   }
@@ -94,7 +106,7 @@ export class Parser {
       if (this.getCurrentToken().type === 'RPAREN') {
         break;
       }
-      args.push(this.buildEntity());
+      args.push(this.buildExpressionIfNext());
     } while (this.getCurrentToken().type === 'COMMA');
 
     const closed: boolean = this.flexibleEat('RPAREN');
@@ -102,20 +114,153 @@ export class Parser {
     return { type: 'function', name: functionName, args, closed };
   }
 
-  // Build ASTFunctionNode AST node entity : (function|variable|value)
+  private buildExpressionIfNext(): ASTNode {
+    let result: ASTNode = this.buildTermIfNext();
+    while (['PLUS', 'MINUS'].includes(this.getCurrentToken().type)) {
+      switch (this.getCurrentToken().type) {
+        case 'PLUS':
+          result = this.buildPlusOperator(result);
+          break;
+        case 'MINUS':
+          result = this.buildMinusOperator(result);
+          break;
+        default:
+          break;
+      }
+    }
+    if (result == null) {
+      throw new SyntaxError(this.unexpectedTokenMessage());
+    }
+    return result;
+  }
+
+  private buildTermIfNext(): ASTNode {
+    let result: ASTNode = this.buildTernaryOperatorIfNext();
+    while (['MULTIPLY', 'DIVIDE'].includes(this.getCurrentToken().type)) {
+      switch (this.getCurrentToken().type) {
+        case 'MULTIPLY':
+          result = this.buildMultiplyOperator(result);
+          break;
+        case 'DIVIDE':
+          result = this.buildDivideOperator(result);
+          break;
+        default:
+          break;
+      }
+    }
+    if (result == null) {
+      throw new SyntaxError(this.unexpectedTokenMessage());
+    }
+    return result;
+  }
+
   private buildEntity(): ASTNode {
     switch (this.getCurrentToken().type) {
       case 'FUNCVAR':
         return (this.peekToken()?.type == 'LPAREN') ? this.buildFunction() : this.buildVariable();
+      case 'LPAREN':
+        return this.buildGroup();
       case 'VALUE':
         return this.buildValue();
       case 'LBRACKET':
         return this.buildArray();
       case 'LBRACE':
         return this.buildObject();
+      case 'INVERT':
+        return this.buildInvertOperator();
       default:
         throw new SyntaxError(this.unexpectedTokenMessage());
     }
+  }
+
+  private buildTernaryOperatorIfNext(): ASTTernaryNode | ASTNode {
+    // Build next entity, if ternary true present, take it as condition
+    // otherwise return entity as is
+    const condition: ASTNode = this.buildEntity();
+    if (this.getCurrentToken().type !== 'QMARK') {
+      return condition;
+    }
+    // Build ternary operator
+    let result: ASTTernaryNode = { type: 'ternary', condition: condition, ifTrue: null, ifFalse: null, closed: false };
+    // Build true child
+    this.eat('QMARK');
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
+    result.ifTrue = this.buildExpressionIfNext();
+    // Build false child
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
+    this.eat('COLON');
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
+    result.ifFalse = this.buildExpressionIfNext();
+    result.closed = true;
+    return result;
+  }
+
+  private buildGroup(): ASTGroupNode {
+    this.eat('LPAREN');
+    const entity: ASTNode = this.buildExpressionIfNext();
+    const closed: boolean = this.flexibleEat('RPAREN');
+    return { type: 'group', item: entity, closed: closed };
+  }
+
+  private buildInvertOperator(): ASTInvertNode {
+    this.eat('INVERT');
+    let result: ASTInvertNode = { type: 'invert', item: null, closed: false };
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
+    result.item = this.buildEntity();
+    result.closed = true;
+    return result
+  }
+
+  private buildPlusOperator(left: ASTNode): ASTOperatorNode {
+    return this.buildExprOperator(left, 'PLUS');
+  }
+
+  private buildMinusOperator(left: ASTNode): ASTOperatorNode {
+    return this.buildExprOperator(left, 'MINUS');
+  }
+
+  private buildExprOperator(
+    left: ASTNode,
+    operator: 'PLUS' | 'MINUS'
+  ): ASTOperatorNode {
+    this.eat(operator);
+
+    const closed: boolean = this.getCurrentToken().type !== 'EOF';
+    const right: ASTNode | null = (closed) ? this.buildTermIfNext() : null;
+
+    const ast_type = operator.toLowerCase() as 'plus' | 'minus';
+
+    return { type: ast_type, left: left, right: right, closed: closed };
+  }
+
+  private buildMultiplyOperator(left: ASTNode): ASTOperatorNode {
+    return this.buildTermOperator(left, 'MULTIPLY');
+  }
+
+  private buildDivideOperator(left: ASTNode): ASTOperatorNode {
+    return this.buildTermOperator(left, 'DIVIDE');
+  }
+
+  private buildTermOperator(
+    left: ASTNode,
+    operator: 'DIVIDE' | 'MULTIPLY'
+  ): ASTOperatorNode {
+    this.eat(operator);
+
+    const closed: boolean = this.getCurrentToken().type !== 'EOF';
+    const right: ASTNode | null = (closed) ? this.buildTernaryOperatorIfNext() : null;
+
+    const ast_type = operator.toLowerCase() as 'divide' | 'multiply';
+
+    return { type: ast_type, left: left, right: right, closed: closed };
   }
 
   private buildVariable(): ASTVariableNode {
@@ -144,7 +289,7 @@ export class Parser {
       if (this.getCurrentToken().type === 'RBRACKET') {
         break;
       }
-      items.push(this.buildEntity());
+      items.push(this.buildTernaryOperatorIfNext());
     } while (this.getCurrentToken().type === 'COMMA');
 
     const closed: boolean = this.flexibleEat('RBRACKET');
@@ -168,7 +313,7 @@ export class Parser {
       }
       const key: ASTNode = this.buildEntity();
       this.eat('COLON');
-      const value: ASTNode = this.buildEntity();
+      const value: ASTNode = this.buildTernaryOperatorIfNext();
       properties.push({ key: key, value: value});
     } while (this.getCurrentToken().type === 'COMMA');
 

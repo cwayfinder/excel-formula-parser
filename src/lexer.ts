@@ -74,12 +74,48 @@ export class Lexer {
       return new Token('RBRACE', '}', this.index, this.text);
     }
 
+    // Tokenize Invert operator token type
+    if (this.getCurrentLine().startsWith("!")) {
+      this.advance();
+      return new Token('INVERT', '!', this.index, this.text);
+    }
+
+    // Tokenize Plus operator token type
+    if (this.getCurrentLine().startsWith("+")) {
+      this.advance();
+      return new Token('PLUS', '+', this.index, this.text);
+    }
+  
+    // Tokenize Minus operator token type
+    if (this.getCurrentLine().startsWith("-")) {
+      this.advance();
+      return new Token('MINUS', '-', this.index, this.text);
+    }
+
+    // Tokenize Multiply operator token type
+    if (this.getCurrentLine().startsWith("*")) {
+      this.advance();
+      return new Token('MULTIPLY', '*', this.index, this.text);
+    }
+
+    // Tokenize Divide operator token type
+    if (this.getCurrentLine().startsWith("/")) {
+      this.advance();
+      return new Token('DIVIDE', '/', this.index, this.text);
+    }
+
     // Tokenize COLON token type
     if (this.getCurrentLine().startsWith(":")) {
       this.advance();
       return new Token('COLON', ':', this.index, this.text);
     }
 
+    // Tokenize ternary QMARK token type
+    if (this.getCurrentLine().startsWith("?")) {
+      this.advance();
+      return new Token('QMARK', '?', this.index, this.text);
+    }
+  
     // Tokenize bool as VALUE token types
     const boolean = this.getCurrentLine().match(/^(true|TRUE|false|FALSE)(?=[^\w])/);
     if (boolean) {

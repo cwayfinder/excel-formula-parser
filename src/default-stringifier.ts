@@ -1,9 +1,12 @@
 import {
   ASTArrayNode,
   ASTFunctionNode,
+  ASTOperatorNode,
   ASTNode,
   ASTObjectNode,
-  ASTVariableNode
+  ASTInvertNode,
+  ASTVariableNode,
+  ASTGroupNode,
 } from './node';
 import { Stringifier } from './stringifier';
 
@@ -38,4 +41,22 @@ export class DefaultStringifier extends Stringifier {
     return result;
   }
 
+  protected visitInvertNode(node: ASTInvertNode): string {
+    let result: string = '!';
+
+    if (node.item == null) {
+      return result;
+    }
+    result += this.visitNode(node.item);
+
+    return result;
+  }
+
+  protected visitGroup(node: ASTGroupNode): string {
+    let result: string = '';
+    result += `(`;
+    result += this.visitNode(node.item);
+    result += (node.closed) ? ')' : '';
+    return result;
+  }
 }

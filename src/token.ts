@@ -4,6 +4,8 @@ export type TokenType =
   'LPAREN' | 'RPAREN' | 'COMMA' |  // Single-character
   'LBRACKET' | 'RBRACKET' | // Single-character
   'LBRACE' | 'RBRACE' | 'COLON' | // Single-character
+  'INVERT' | 'PLUS' | 'MINUS' | 'MULTIPLY' | 'DIVIDE' | // Single-character
+  'QMARK' | // Single-character
   'FUNCVAR' | 'VALUE' |  // Entities
   'EOF';  // Misc
 

@@ -1,10 +1,14 @@
 import {
   ASTArrayNode,
   ASTFunctionNode,
+  ASTOperatorNode,
   ASTNode,
   ASTObjectNode,
   ASTValueNode,
-  ASTVariableNode
+  ASTInvertNode,
+  ASTVariableNode,
+  ASTGroupNode,
+  ASTTernaryNode,
 } from './node';
 import * as he from 'he';
 
@@ -22,6 +26,20 @@ export abstract class Stringifier {
         return this.visitArrayNode(node);
       case 'object':
         return this.visitObjectNode(node);
+      case 'invert':
+        return this.visitInvertNode(node);
+      case 'plus':
+        return this.visitOperatorNode(node);
+      case 'minus':
+        return this.visitOperatorNode(node);
+      case 'multiply':
+        return this.visitOperatorNode(node);
+      case 'divide':
+        return this.visitOperatorNode(node);
+      case 'group':
+        return this.visitGroup(node);
+      case 'ternary':
+        return this.visitTernaryNode(node);
       default:
         throw new Error(`Unrecognised AST node`);
     }
@@ -59,6 +77,41 @@ export abstract class Stringifier {
     return String(item);
   }
 
+  protected visitOperatorNode(node: ASTOperatorNode): string {
+    let operator: string = ''
+    if (node.type === 'plus') {
+      operator = ' + ';
+    } else if (node.type === 'minus') {
+      operator = ' - ';
+    } else if (node.type === 'multiply') {
+      operator = ' * ';
+    } else if (node.type === 'divide') {
+      operator = ' / ';
+    } else {
+      throw new Error(`Unrecognised operator type ${node.type}`);
+    }
+
+    let result: string = '';
+    result += this.visitNode(node.left);
+    result += operator;
+    result += (node.closed && node.right) ? this.visitNode(node.right) : '';
+
+    return result;
+  }
+
+  protected visitTernaryNode(node: ASTTernaryNode): string {
+    let result: string =  this.visitNode(node.condition) + ' ? ';
+    if (node.ifTrue == null) {
+      return result;
+    }
+    result += this.visitNode(node.ifTrue) + ' : ';
+    if (node.ifFalse == null) {
+      return result;
+    }
+    result += this.visitNode(node.ifFalse);
+    return result;
+  }
+
   protected abstract visitFunctionNode(node: ASTFunctionNode): string;
 
   protected abstract visitVariableNode(node: ASTVariableNode): string;
@@ -67,4 +120,7 @@ export abstract class Stringifier {
 
   protected abstract visitObjectNode(node: ASTObjectNode): string;
 
+  protected abstract visitInvertNode(node: ASTInvertNode): string;
+
+  protected abstract visitGroup(node: ASTGroupNode): string;
 }

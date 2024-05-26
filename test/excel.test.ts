@@ -21,6 +21,14 @@ import {
     rule8String, rule8Html,
     ruleEmptyFunctionTree, ruleEmptyFunctionString,
     ruleNestedFunctionsTree, ruleNestedFunctionsString,
+    ruleInvertString, ruleInvertTree,
+    ruleOperatorString, ruleOperatorTree,
+    ruleInvertWithPlus, ruleInvertWithPlusTree,
+    ruleGroupString, ruleGroupTree,
+    ruleOperatorPrecedenceString1, ruleOperatorPrecedenceTree1,
+    ruleOperatorPrecedenceString2, ruleOperatorPrecedenceTree2,
+    ruleTernaryString, ruleTernaryTree,
+    ruleChainedTernaryString, ruleChainedTernaryTree
 } from './cases';
 
 const excel : Excel = new Excel()
@@ -39,6 +47,16 @@ describe('Excel.parse() end usage tests', () => {
         expect(excel.parse(ruleObjectString)).toEqual(ruleObjectTree);
         expect(excel.parse(ruleObject2String)).toEqual(ruleObject2Tree);
         expect(excel.parse(ruleTmplString)).toEqual(ruleTmplTree);
+        expect(excel.parse(ruleInvertString)).toEqual(ruleInvertTree);
+        expect(excel.parse(ruleOperatorString)).toEqual(ruleOperatorTree);
+        expect(excel.parse(ruleInvertWithPlus)).toEqual(ruleInvertWithPlusTree);
+        expect(excel.parse(ruleGroupString)).toEqual(ruleGroupTree);
+        expect(excel.parse(ruleEmptyFunctionString)).toEqual(ruleEmptyFunctionTree);
+        expect(excel.parse(ruleNestedFunctionsString)).toEqual(ruleNestedFunctionsTree);
+        expect(excel.parse(ruleOperatorPrecedenceString1)).toEqual(ruleOperatorPrecedenceTree1);
+        expect(excel.parse(ruleOperatorPrecedenceString2)).toEqual(ruleOperatorPrecedenceTree2);
+        expect(excel.parse(ruleTernaryString)).toEqual(ruleTernaryTree);
+        expect(excel.parse(ruleChainedTernaryString)).toEqual(ruleChainedTernaryTree);
     });
 });
 
@@ -57,6 +75,14 @@ describe('Excel.stringify() end usage tests', () => {
         expect(excel.stringify(ruleObjectTree)).toEqual(ruleObjectString);
         expect(excel.stringify(ruleObject2Tree)).toEqual(ruleObject2String);
         expect(excel.stringify(ruleTmplTree)).toEqual(escapedRuleTmplString);
+        expect(excel.stringify(ruleInvertTree)).toEqual(ruleInvertString);
+        expect(excel.stringify(ruleOperatorTree)).toEqual(ruleOperatorString);
+        expect(excel.stringify(ruleInvertWithPlusTree)).toEqual(ruleInvertWithPlus);
+        expect(excel.stringify(ruleGroupTree)).toEqual(ruleGroupString);
+        expect(excel.stringify(ruleOperatorPrecedenceTree1)).toEqual(ruleOperatorPrecedenceString1);
+        expect(excel.stringify(ruleOperatorPrecedenceTree2)).toEqual(ruleOperatorPrecedenceString2);
+        expect(excel.stringify(ruleTernaryTree)).toEqual(ruleTernaryString);
+        expect(excel.stringify(ruleChainedTernaryTree)).toEqual(ruleChainedTernaryString);
     });
 
 });
@@ -149,6 +175,267 @@ describe('Excel.toHtml() end usage tests', () => {
             </div>
         `);
         expect(excel.toHtml(`concat([prop('index'), '-', prop('value')])`)).toEqual(expectedArrayWithNestedFunctions);
+    });
+
+    test('Testing invert operator', () => {
+        expect(excel.toHtml(`!equal(value('#actorType'), 'PERSON')`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">!</span>
+                    <span class="function">equal</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="function">value</span>
+                        <span class="paren-deep-2">(</span>
+                            <span class="value">'#actorType'</span>
+                        <span class="paren-deep-2">)</span>,
+                        <span class="value">'PERSON'</span>
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+        expect(excel.toHtml(`!`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">!</span>
+                </div>
+            `));
+        expect(excel.toHtml(`some([false, false, !value('#name')])`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="function">some</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="paren-deep-2">[</span>
+                            <span class="value">false</span>,
+                            <span class="value">false</span>,
+                            <span class="paren-deep-3">!</span>
+                            <span class="function">value</span>
+                            <span class="paren-deep-3">(</span>
+                                <span class="value">'#name'</span>
+                            <span class="paren-deep-3">)</span>
+                        <span class="paren-deep-2">]</span>
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+    });
+
+    test('Testing Plus operator', () => {
+        expect(excel.toHtml(`2 + 2`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    + 
+                    <span class="value">2</span>
+                </div>
+            `));
+        expect(excel.toHtml(`1 + 2 + 3 + 4 + 5`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">1</span>
+                    + 
+                    <span class="value">2</span>
+                    + 
+                    <span class="value">3</span>
+                    + 
+                    <span class="value">4</span>
+                    + 
+                    <span class="value">5</span>
+                </div>
+            `));
+        expect(excel.toHtml(`1 + 2 + 3 + 4 +`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">1</span>
+                    + 
+                    <span class="value">2</span>
+                    + 
+                    <span class="value">3</span>
+                    + 
+                    <span class="value">4</span>
+                    + 
+                </div>
+            `));
+        expect(excel.toHtml(`'prefix' + value('#name')`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">'prefix'</span>
+                    + 
+                    <span class="function">value</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="value">'#name'</span>
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+    });
+
+    test('Testing Minus operator', () => {
+        expect(excel.toHtml(`2 - 2`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    - 
+                    <span class="value">2</span>
+                </div>
+            `));
+        expect(excel.toHtml(`2 -`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    - 
+                </div>
+            `));
+        expect(excel.toHtml(`'prefix' - value('#name')`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">'prefix'</span>
+                    - 
+                    <span class="function">value</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="value">'#name'</span>
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+    });
+
+    test('Testing Multiply operator', () => {
+        expect(excel.toHtml(`2 * 2`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    * 
+                    <span class="value">2</span>
+                </div>
+            `));
+        expect(excel.toHtml(`2 *`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    * 
+                </div>
+            `));
+        expect(excel.toHtml(`'prefix' * value('#name')`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">'prefix'</span>
+                    * 
+                    <span class="function">value</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="value">'#name'</span>
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+    });
+
+    test('Testing Divide operator', () => {
+        expect(excel.toHtml(`2 / 2`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    / 
+                    <span class="value">2</span>
+                </div>
+            `));
+            expect(excel.toHtml(`2 /`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    / 
+                </div>
+            `));
+        expect(excel.toHtml(`'prefix' / value('#name')`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">'prefix'</span>
+                    / 
+                    <span class="function">value</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="value">'#name'</span>
+                    <span class="paren-deep-1">)</span>
+                </div>
+            `));
+    });
+
+    test('Testing combination of invert with operator', () => {
+        expect(excel.toHtml(`!!!2 + 2`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="value">2</span>
+                    + 
+                    <span class="value">2</span>
+                </div>
+            `));
+    })
+
+    test('Testing combination of multiple operators', () => {
+        expect(excel.toHtml(`!!!1 + 2 * 3 * 4 / 5`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="paren-deep-1">!</span>
+                    <span class="value">1</span>
+                    + 
+                    <span class="value">2</span>
+                    * 
+                    <span class="value">3</span>
+                    * 
+                    <span class="value">4</span>
+                    /
+                    <span class="value">5</span>
+                </div>
+            `));
+    })
+
+    test('Testing grouping', () => {
+        expect(excel.toHtml(`(2 + 5) / 3`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">(</span>
+                        <span class="value">2</span>
+                        + 
+                        <span class="value">5</span>
+                    <span class="paren-deep-1">)</span>
+                    / 
+                    <span class="value">3</span>
+                </div>
+            `));
+    })
+
+    test('Testing ternary conditional', () => {
+        expect(excel.toHtml("'new/chevron-' + empty(value('#tags')) ? 'down' : 'up'"))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">'new/chevron-'</span>
+                    + 
+                    <span class="function">empty</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="function">value</span>
+                        <span class="paren-deep-2">(</span>
+                            <span class="value">'#tags'</span>
+                        <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
+                    ? 
+                    <span class="value">'down'</span>
+                    : 
+                    <span class="value">'up'</span>
+                </div>
+            `));
+        expect(excel.toHtml("empty(value('#tags')) ? 'down'"))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="function">empty</span>
+                    <span class="paren-deep-1">(</span>
+                        <span class="function">value</span>
+                        <span class="paren-deep-2">(</span>
+                            <span class="value">'#tags'</span>
+                        <span class="paren-deep-2">)</span>
+                    <span class="paren-deep-1">)</span>
+                    ? 
+                    <span class="value">'down'</span>
+                    : 
+                </div>
+            `));
     });
 
     test('Testing parsing objects', () => {

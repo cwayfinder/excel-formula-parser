@@ -417,3 +417,294 @@ export const ruleNestedFunctionsTree: ASTNode = {
   ],
   closed: true,
 };
+
+export const ruleInvertString = `!equal(value('#actorType'), 'PERSON')`;
+export const ruleInvertTree: ASTNode = {
+  type: 'invert',
+  item: {
+    type: 'function',
+    name: 'equal',
+    args: [
+      {
+        type: 'function',
+        name: 'value',
+        args: [
+          {
+            type: 'value',
+            value: '#actorType'
+          }
+        ],
+        closed: true,
+      },
+      {
+        type: 'value',
+        value: 'PERSON'
+      }
+    ],
+    closed: true,
+  },
+  closed: true,
+}
+
+export const ruleOperatorString = `'prefix' + value('#name')`;
+export const ruleOperatorTree: ASTNode = {
+  type: 'plus',
+  left: {
+    type: 'value',
+    value: 'prefix'
+  },
+  right: {
+    type: 'function',
+    name: 'value',
+    args: [
+      {
+        type: 'value',
+        value: '#name'
+      }
+    ],
+    closed: true,
+  },
+  closed: true,
+};
+
+export const ruleInvertWithPlus = `!!!2 + 5`;
+export const ruleInvertWithPlusTree: ASTNode = {
+  type: 'plus',
+  left: {
+    type: 'invert',
+    item: {
+      type: 'invert',
+      item: {
+        type: 'invert',
+        item: {
+          type: 'value',
+          value: 2
+        },
+        closed: true,
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  right: {
+    type: 'value',
+    value: 5
+  },
+  closed: true,
+};
+
+export const ruleGroupString = `(2 + 5) / 3`;
+export const ruleGroupTree: ASTNode = {
+  type: 'divide',
+  left: {
+    type: 'group',
+    item: {
+      type: 'plus',
+      left: {
+        type: 'value',
+        value: 2
+      },
+      right: {
+        type: 'value',
+        value: 5
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  right: {
+    type: 'value',
+    value: 3
+  },
+  closed: true,
+};
+
+export const ruleOperatorPrecedenceString1 = `1 + 2 * 3 / 4 - 5`;
+export const ruleOperatorPrecedenceTree1: ASTNode = {
+  type: 'minus',
+  left: {
+    type: 'plus',
+    left: {
+      type: 'value',
+      value: 1
+    },
+    right: {
+      type: 'divide',
+      left: {
+        type: 'multiply',
+        left: {
+          type: 'value',
+          value: 2
+        },
+        right: {
+          type: 'value',
+          value: 3
+        },
+        closed: true,
+      },
+      right: {
+        type: 'value',
+        value: 4
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  right: {
+    type: 'value',
+    value: 5
+  },
+  closed: true,
+};
+
+export const ruleOperatorPrecedenceString2 = `2 * 3 + 4 / 2 - 5`;
+export const ruleOperatorPrecedenceTree2: ASTNode = {
+  type: 'minus',
+  left: {
+    type: 'plus',
+    left: {
+      type: 'multiply',
+      left: {
+        type: 'value',
+        value: 2
+      },
+      right: {
+        type: 'value',
+        value: 3
+      },
+      closed: true,
+    },
+    right: {
+      type: 'divide',
+      left: {
+        type: 'value',
+        value: 4
+      },
+      right: {
+        type: 'value',
+        value: 2
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  right: {
+    type: 'value',
+    value: 5
+  },
+  closed: true,
+};
+
+export const ruleTernaryString = `'new/chevron-' + empty(value('#tags')) ? 'down' : 'up'`;
+export const ruleTernaryTree: ASTNode = {
+  type: 'plus',
+  left: {
+    type: 'value',
+    value: 'new/chevron-'
+  },
+  right: {
+    type: 'ternary',
+    condition: {
+      type: 'function',
+      name: 'empty',
+      args: [
+        {
+          type: 'function',
+          name: 'value',
+          args: [
+            {
+              type: 'value',
+              value: '#tags'
+            }
+          ],
+          closed: true,
+        }
+      ],
+      closed: true,
+    },
+    ifTrue: {
+      type: 'value',
+      value: 'down'
+    },
+    ifFalse: {
+      type: 'value',
+      value: 'up'
+    },
+    closed: true,
+  },
+  closed: true,
+};
+
+export const ruleChainedTernaryString = `empty(value('#tags')) ? 'down' : empty(value('#tags2')) ? 13 + 2 : 14 / 7`;
+export const ruleChainedTernaryTree: ASTNode = {
+  type: 'ternary',
+  condition: {
+    type: 'function',
+    name: 'empty',
+    args: [
+      {
+        type: 'function',
+        name: 'value',
+        args: [
+          {
+            type: 'value',
+            value: '#tags'
+          }
+        ],
+        closed: true,
+      }
+    ],
+    closed: true,
+  },
+  ifTrue: {
+    type: 'value',
+    value: 'down'
+  },
+  ifFalse: {
+    type: 'ternary',
+    condition: {
+      type: 'function',
+      name: 'empty',
+      args: [
+        {
+          type: 'function',
+          name: 'value',
+          args: [
+            {
+              type: 'value',
+              value: '#tags2'
+            }
+          ],
+          closed: true,
+        }
+      ],
+      closed: true,
+    },
+    ifTrue: {
+      type: 'plus',
+      left: {
+        type: 'value',
+        value: 13
+      },
+      right: {
+        type: 'value',
+        value: 2
+      },
+      closed: true,
+    },
+    ifFalse: {
+      type: 'divide',
+      left: {
+        type: 'value',
+        value: 14
+      },
+      right: {
+        type: 'value',
+        value: 7
+      },
+      closed: true,
+    },
+    closed: true,
+  },
+  closed: true,
+};
