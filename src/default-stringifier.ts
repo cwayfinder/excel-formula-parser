@@ -42,7 +42,14 @@ export class DefaultStringifier extends Stringifier {
   }
 
   protected visitInvertNode(node: ASTInvertNode): string {
-    return `!${this.visitNode(node.item)}`;
+    let result: string = '!';
+
+    if (node.item == null) {
+      return result;
+    }
+    result += this.visitNode(node.item);
+
+    return result;
   }
 
   protected visitGroup(node: ASTGroupNode): string {

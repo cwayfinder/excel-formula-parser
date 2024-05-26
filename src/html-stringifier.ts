@@ -102,8 +102,10 @@ export class HtmlStringifier extends Stringifier {
   protected visitInvertNode(node: ASTInvertNode): string {
     const paren: string = `paren-deep-${this.currentDeep}`;
 
-    let result: string = '';
-    result += this.createHtmlSpan(paren, '!');
+    let result: string = this.createHtmlSpan(paren, '!');
+    if (node.item == null) {
+      return result;
+    }
     result += this.visitNode(node.item);
 
     return result;

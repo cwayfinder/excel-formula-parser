@@ -210,8 +210,13 @@ export class Parser {
 
   private buildInvertOperator(): ASTInvertNode {
     this.eat('INVERT');
-    const item: ASTNode = this.buildEntity();
-    return { type: 'invert', item };
+    let result: ASTInvertNode = { type: 'invert', item: null, closed: false };
+    if (this.getCurrentToken().type === 'EOF') {
+      return result;
+    }
+    result.item = this.buildEntity();
+    result.closed = true;
+    return result
   }
 
   private buildPlusOperator(left: ASTNode): ASTOperatorNode {

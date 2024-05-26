@@ -40,7 +40,8 @@ export interface ASTValueNode extends ASTNodeBase {
 
 export interface ASTInvertNode extends ASTNodeBase {
   type: 'invert';
-  item: ASTNode;
+  item: ASTNode | null;
+  closed: boolean;
 }
 
 export interface ASTGroupNode extends ASTNodeBase {
