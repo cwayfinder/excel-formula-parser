@@ -192,6 +192,12 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="paren-deep-1">)</span>
                 </div>
             `));
+        expect(excel.toHtml(`!`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="paren-deep-1">!</span>
+                </div>
+            `));
         expect(excel.toHtml(`some([false, false, !value('#name')])`))
             .toEqual(removeExtraSpaces(`
                 <div>
@@ -234,6 +240,19 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="value">5</span>
                 </div>
             `));
+        expect(excel.toHtml(`1 + 2 + 3 + 4 +`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">1</span>
+                    + 
+                    <span class="value">2</span>
+                    + 
+                    <span class="value">3</span>
+                    + 
+                    <span class="value">4</span>
+                    + 
+                </div>
+            `));
         expect(excel.toHtml(`'prefix' + value('#name')`))
             .toEqual(removeExtraSpaces(`
                 <div>
@@ -254,6 +273,13 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="value">2</span>
                     - 
                     <span class="value">2</span>
+                </div>
+            `));
+        expect(excel.toHtml(`2 -`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    - 
                 </div>
             `));
         expect(excel.toHtml(`'prefix' - value('#name')`))
@@ -278,6 +304,13 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="value">2</span>
                 </div>
             `));
+        expect(excel.toHtml(`2 *`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    * 
+                </div>
+            `));
         expect(excel.toHtml(`'prefix' * value('#name')`))
             .toEqual(removeExtraSpaces(`
                 <div>
@@ -298,6 +331,13 @@ describe('Excel.toHtml() end usage tests', () => {
                     <span class="value">2</span>
                     / 
                     <span class="value">2</span>
+                </div>
+            `));
+            expect(excel.toHtml(`2 /`))
+            .toEqual(removeExtraSpaces(`
+                <div>
+                    <span class="value">2</span>
+                    / 
                 </div>
             `));
         expect(excel.toHtml(`'prefix' / value('#name')`))
